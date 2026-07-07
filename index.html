@@ -4,14 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Trading Command Center — Terminal Pribadi Trader</title>
-<meta name="description" content="Command center trading modern multi-instrumen (Gold, Forex, Indeks, Crypto) dengan widget resmi TradingView, kalkulator lengkap, dan trend analyzer per timeframe." />
+<meta name="description" content="Command center trading modern multi-instrumen (Gold, Forex, Indeks, Crypto) dengan widget resmi TradingView, kalender ekonomi multi-sumber (TradingView / Investing.com / MQL5), sesi global, kalkulator lengkap, dan trade journal." />
 
 <!-- Fonts: Bricolage (headings) + Manrope (UI) + JetBrains Mono (numbers) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-<!-- Lucide icons via CDN -->
+<!-- Lucide icons -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
 <style>
@@ -21,14 +21,14 @@
    ========================================================= */
 :root{
   --bg: #FFFFFF;
-  --panel: #FBFAF6;          /* soft paper */
+  --panel: #FBFAF6;
   --panel-2: #F5F3EC;
   --ink: #0F1116;
   --ink-2: #2A2D34;
   --muted: #6B7280;
   --line: #E9E5DA;
   --line-strong: #D8D2C2;
-  --accent: #E85D3B;         /* warm coral — distinctive */
+  --accent: #E85D3B;
   --accent-soft: #FBE7DF;
   --bull: #0E8F55;
   --bear: #C0392B;
@@ -37,6 +37,7 @@
   --radius-sm: 10px;
   --shadow-1: 0 1px 2px rgba(15,17,22,0.04), 0 2px 6px rgba(15,17,22,0.04);
   --shadow-2: 0 6px 24px rgba(15,17,22,0.06);
+  --shadow-3: 0 16px 48px rgba(15,17,22,0.12);
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --ui: 'Manrope', system-ui, -apple-system, sans-serif;
   --display: 'Bricolage Grotesque', 'Manrope', sans-serif;
@@ -57,19 +58,15 @@ body{
 
 a{ color: inherit; text-decoration: none; }
 button{ font-family: inherit; cursor:pointer; border:none; background:none; color:inherit;}
-input, select{ font-family: inherit; color: var(--ink); }
+input, select, textarea{ font-family: inherit; color: var(--ink); }
 
-/* ---------- Layout scaffolding ---------- */
-.app{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
+/* ---------- Layout ---------- */
+.app{ min-height:100vh; display:flex; flex-direction:column; }
 
 /* ---------- Header ---------- */
 .header{
   position: sticky; top:0; z-index: 50;
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.94);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
@@ -82,37 +79,27 @@ input, select{ font-family: inherit; color: var(--ink); }
   align-items: center;
   gap: 24px;
 }
-.brand{
-  display:flex; align-items:center; gap:12px;
-}
+.brand{ display:flex; align-items:center; gap:12px; }
 .brand-mark{
   width: 34px; height: 34px;
-  background: var(--ink);
-  color: #fff;
+  background: var(--ink); color: #fff;
   border-radius: 8px;
   display:flex; align-items:center; justify-content:center;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.5px;
+  font-family: var(--display); font-weight: 700;
+  font-size: 15px; letter-spacing: -0.5px;
 }
 .brand-title{
   font-family: var(--display);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+  font-size: 17px; font-weight: 700; letter-spacing: -0.3px;
 }
 .brand-sub{
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 0.5px; text-transform: uppercase;
 }
 
 .header-metrics{
   display:flex; align-items:center; gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: center; flex-wrap: wrap;
 }
 .metric{
   display:flex; align-items:center; gap:8px;
@@ -124,6 +111,7 @@ input, select{ font-family: inherit; color: var(--ink); }
 }
 .metric .label{ color: var(--muted); font-size:11px; letter-spacing:.4px; text-transform:uppercase;}
 .metric .value{ font-family: var(--mono); font-weight:600; color: var(--ink);}
+.metric i{ width:14px; height:14px; }
 .dot{
   width:8px; height:8px; border-radius: 50%;
   background: var(--muted);
@@ -133,9 +121,7 @@ input, select{ font-family: inherit; color: var(--ink); }
 .dot.closed{ background: var(--bear); box-shadow: 0 0 0 3px rgba(192,57,43,0.15);}
 .dot.warn{ background: var(--amber); box-shadow: 0 0 0 3px rgba(199,144,36,0.18);}
 
-.header-actions{
-  display:flex; align-items:center; gap: 8px;
-}
+.header-actions{ display:flex; align-items:center; gap: 8px; }
 .icon-btn{
   width:36px; height:36px;
   border: 1px solid var(--line);
@@ -146,25 +132,25 @@ input, select{ font-family: inherit; color: var(--ink); }
 }
 .icon-btn:hover{ background: var(--panel-2); }
 .icon-btn:active{ transform: translateY(1px); }
+.icon-btn.solid{
+  background: var(--ink); color:#fff; border-color: var(--ink);
+}
+.icon-btn.solid:hover{ background:#22252e; }
 
-/* ---------- Ticker tape (TradingView) ---------- */
+/* ---------- Ticker tape ---------- */
 .tape-wrap{ border-bottom: 1px solid var(--line); background: var(--panel); }
 
 /* ---------- Tabs ---------- */
-.tabs-wrap{
-  border-bottom: 1px solid var(--line);
-  background: #fff;
-}
+.tabs-wrap{ border-bottom: 1px solid var(--line); background: #fff; }
 .tabs{
   max-width: 1440px; margin: 0 auto;
   padding: 0 24px;
-  display:flex; gap: 4px;
+  display:flex; gap: 2px;
   overflow-x: auto;
 }
 .tab{
-  padding: 14px 16px;
-  font-size: 13.5px;
-  font-weight: 600;
+  padding: 14px 14px;
+  font-size: 13px; font-weight: 600;
   color: var(--muted);
   border-bottom: 2px solid transparent;
   display:inline-flex; align-items:center; gap:8px;
@@ -203,9 +189,7 @@ input, select{ font-family: inherit; color: var(--ink); }
 }
 .card-title{
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.2px;
+  font-weight: 700; font-size: 15px; letter-spacing: -0.2px;
   display:flex; align-items:center; gap: 10px;
 }
 .card-title i{ width:16px; height:16px; color: var(--accent);}
@@ -214,9 +198,7 @@ input, select{ font-family: inherit; color: var(--ink); }
 .card-bd.pad{ padding: 18px; }
 
 /* Symbol select */
-.sym-select{
-  display:flex; align-items:center; gap:8px;
-}
+.sym-select{ display:flex; align-items:center; gap:8px; }
 .select{
   background: var(--panel);
   border: 1px solid var(--line);
@@ -232,9 +214,7 @@ input, select{ font-family: inherit; color: var(--ink); }
 
 /* ---------- Dashboard grid ---------- */
 .dash-grid{
-  display:grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 16px;
+  display:grid; grid-template-columns: repeat(12, 1fr); gap: 16px;
 }
 .col-8{ grid-column: span 8; }
 .col-4{ grid-column: span 4; }
@@ -242,7 +222,7 @@ input, select{ font-family: inherit; color: var(--ink); }
 .col-12{ grid-column: span 12; }
 .col-3{ grid-column: span 3; }
 
-/* Widget hosts fill their card body */
+/* Widget host sizes */
 .tv-host{ width: 100%; }
 .h-chart{ height: 560px; }
 .h-tech{ height: 425px; }
@@ -252,6 +232,9 @@ input, select{ font-family: inherit; color: var(--ink); }
 .h-info{ height: 220px; }
 .h-mini{ height: 200px; }
 .h-trend{ height: 400px; }
+.h-cross{ height: 480px; }
+.h-screener{ height: 550px; }
+.h-conv{ height: 280px; }
 
 /* ---------- Trend Analyzer ---------- */
 .trend-controls{
@@ -259,20 +242,79 @@ input, select{ font-family: inherit; color: var(--ink); }
   margin-bottom: 16px;
 }
 .trend-grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
 }
 .tf-badge{
   display:inline-flex; align-items:center; gap:6px;
-  padding: 4px 10px;
-  border-radius: 999px;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  font-family: var(--mono); font-weight: 600;
+  font-size: 11.5px; color: var(--ink-2);
+}
+
+/* ---------- Sessions ---------- */
+.session-grid{
+  display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.session{
+  padding: 20px 22px;
+  display: grid; gap: 6px;
+}
+.session .s-name{
+  font-family: var(--display); font-weight: 700; font-size: 18px;
+  display:flex; align-items:center; gap: 8px;
+}
+.session .s-flag{
+  width: 26px; height: 18px; border-radius: 3px;
   background: var(--panel-2);
-  border: 1px solid var(--line);
-  font-family: var(--mono);
-  font-weight: 600;
-  font-size: 11.5px;
-  color: var(--ink-2);
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:12px;
+}
+.session .s-times{
+  font-family: var(--mono); font-size: 13px; color: var(--ink-2);
+}
+.session .s-hours{
+  font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+}
+.session .s-status{
+  margin-top: 8px;
+  display:inline-flex; align-items:center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.5px;
+  width: fit-content;
+}
+.session .s-status.open{ background:#e6f4ee; color:var(--bull); }
+.session .s-status.closed{ background:#f3f0e6; color: var(--muted); }
+.session .s-progress{
+  height: 6px; background: var(--panel-2); border-radius: 999px;
+  overflow: hidden; margin-top: 6px;
+}
+.session .s-progress > span{
+  display: block; height: 100%;
+  background: linear-gradient(90deg, var(--accent), #ff8560);
+  transition: width .8s ease;
+}
+.session .s-countdown{
+  font-family: var(--mono); font-size: 12px; color: var(--muted);
+}
+
+/* ---------- Multi-source calendar ---------- */
+.mini-tabs{
+  display:flex; gap: 4px; background: var(--panel);
+  border-radius: 10px; padding: 4px; border: 1px solid var(--line);
+}
+.mini-tab{
+  padding: 8px 14px; border-radius: 8px;
+  font-size: 12.5px; font-weight: 600; color: var(--muted);
+  transition: background .18s ease, color .18s ease;
+}
+.mini-tab.active{
+  background: #fff; color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.calendar-frame{
+  width: 100%; border: none; display: block;
+  background: #fff;
 }
 
 /* ---------- Watchlist ---------- */
@@ -307,45 +349,33 @@ input, select{ font-family: inherit; color: var(--ink); }
 }
 .btn:hover{ background: var(--panel-2); }
 .btn-primary{
-  background: var(--ink);
-  color: #fff;
-  border-color: var(--ink);
+  background: var(--ink); color: #fff; border-color: var(--ink);
 }
 .btn-primary:hover{ background: #22252e; }
 .btn-accent{
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+  background: var(--accent); color: #fff; border-color: var(--accent);
 }
 .btn-accent:hover{ background: #d64b28; }
 .btn-danger{
-  color: var(--bear);
-  border-color: transparent;
-  background: transparent;
-  padding: 6px 8px;
+  color: var(--bear); border-color: transparent;
+  background: transparent; padding: 6px 8px;
 }
 .btn-danger:hover{ background: #fbeceb; }
 
 .wl-grid{
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
 }
-.wl-item{
-  position: relative;
-}
+.wl-item{ position: relative; }
 .wl-remove{
   position:absolute; top:8px; right:8px; z-index: 3;
-  background: #fff;
-  border: 1px solid var(--line);
-  width: 30px; height:30px;
-  border-radius: 8px;
+  background: #fff; border: 1px solid var(--line);
+  width: 30px; height:30px; border-radius: 8px;
   display:flex; align-items:center; justify-content:center;
   color: var(--bear);
 }
 .wl-remove:hover{ background: #fbeceb; }
 
-.wl-empty{
+.wl-empty, .empty{
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius);
   padding: 42px 20px;
@@ -356,37 +386,29 @@ input, select{ font-family: inherit; color: var(--ink); }
 
 /* ---------- Calculators ---------- */
 .calc-grid{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;
 }
 .calc form{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  padding: 18px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px; padding: 18px;
 }
 .calc .field{ display:flex; flex-direction:column; gap:6px; }
 .calc .field.full{ grid-column: span 2; }
 .calc label{
-  font-size: 11.5px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  font-size: 11.5px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.4px;
   font-weight: 600;
 }
-.calc input, .calc select{
+.calc input, .calc select, .calc textarea{
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: #fff;
   font-family: var(--mono);
-  font-size: 13.5px;
-  font-weight: 500;
+  font-size: 13.5px; font-weight: 500;
 }
-.calc input:focus, .calc select:focus{
-  outline: 2px solid var(--accent-soft);
-  border-color: var(--accent);
+.calc input:focus, .calc select:focus, .calc textarea:focus{
+  outline: 2px solid var(--accent-soft); border-color: var(--accent);
 }
 .calc .result{
   grid-column: span 2;
@@ -395,22 +417,99 @@ input, select{ font-family: inherit; color: var(--ink); }
   border-radius: 10px;
   background: var(--panel);
   border: 1px solid var(--line);
-  display: grid;
-  gap: 6px;
+  display: grid; gap: 6px;
 }
 .calc .result .r-row{
   display:flex; align-items:baseline; justify-content:space-between; gap: 12px;
 }
 .calc .result .r-label{ color: var(--muted); font-size: 12px; }
 .calc .result .r-value{
-  font-family: var(--mono);
-  font-weight: 700;
-  font-size: 17px;
-  color: var(--ink);
+  font-family: var(--mono); font-weight: 700;
+  font-size: 17px; color: var(--ink);
 }
 .calc .result.strong{ background: #0F1116; color: #fff; border-color: #0F1116; }
 .calc .result.strong .r-label{ color: #a8adb8; }
 .calc .result.strong .r-value{ color: #fff; }
+
+/* Pivot table */
+.pivot-table{
+  grid-column: span 2;
+  border: 1px solid var(--line); border-radius: 10px;
+  overflow: hidden;
+}
+.pivot-table table{ width:100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; }
+.pivot-table th, .pivot-table td{
+  padding: 8px 12px; border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+.pivot-table th:first-child, .pivot-table td:first-child{ text-align: left; color: var(--muted); font-weight:600; }
+.pivot-table thead th{ background: var(--panel); font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing:0.4px;}
+.pivot-table tbody tr:last-child td{ border-bottom: none; }
+.pivot-table td.pp{ color: var(--accent); font-weight: 700; }
+.pivot-table td.res{ color: var(--bull); }
+.pivot-table td.sup{ color: var(--bear); }
+
+/* ---------- Journal ---------- */
+.jr-controls{
+  display:grid; gap:10px;
+  padding: 14px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--panel);
+  margin-bottom: 16px;
+}
+.jr-form{
+  display: grid; grid-template-columns: repeat(6, minmax(0,1fr));
+  gap: 10px;
+}
+.jr-form .full{ grid-column: 1 / -1;}
+.jr-form input, .jr-form select, .jr-form textarea{
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-family: var(--mono);
+  font-size: 13px;
+  width: 100%;
+}
+.jr-form textarea{ font-family: var(--ui); resize: vertical; min-height: 60px;}
+.jr-form label{
+  font-size: 11px; color: var(--muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing:0.4px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.jr-stats{
+  display:grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+  margin-bottom: 16px;
+}
+.stat-card{
+  background:#fff; border:1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; display: grid; gap: 6px;
+}
+.stat-card .l{ color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing:0.5px; font-weight:600;}
+.stat-card .v{ font-family: var(--mono); font-weight: 700; font-size: 20px; color: var(--ink);}
+.stat-card .v.bull{ color: var(--bull); }
+.stat-card .v.bear{ color: var(--bear); }
+.stat-card .v.accent{ color: var(--accent);}
+
+.jr-table{
+  border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; background: #fff;
+}
+.jr-table table{ width:100%; border-collapse: collapse; font-size: 13px;}
+.jr-table th, .jr-table td{
+  padding: 10px 14px; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: middle;
+}
+.jr-table th{
+  background: var(--panel); font-size: 11px; text-transform: uppercase;
+  color: var(--muted); letter-spacing: 0.5px; font-weight: 700;
+}
+.jr-table tbody tr:hover{ background: var(--panel); }
+.jr-table td.mono, .jr-table th.num{ font-family: var(--mono); text-align: right;}
+.jr-table td.num{ font-family: var(--mono); text-align: right;}
+.jr-table tbody tr:last-child td{ border-bottom: none;}
 
 /* ---------- Utility ---------- */
 .mono{ font-family: var(--mono); }
@@ -420,17 +519,104 @@ input, select{ font-family: inherit; color: var(--ink); }
 .hidden{ display: none !important; }
 .pill{
   display:inline-flex; align-items:center; gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--ink-2);
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--line);
+  font-size: 11.5px; font-weight: 600; color: var(--ink-2);
 }
 .pill.accent{ background: var(--accent-soft); color: #922e12; border-color: #f6cebd; }
 .pill.bull{ background: #e6f4ee; color: var(--bull); border-color: #c6e6d5; }
 .pill.bear{ background: #fbeceb; color: var(--bear); border-color: #f3cfcc; }
+
+/* ---------- Modal (Settings) ---------- */
+.modal-backdrop{
+  position: fixed; inset: 0;
+  background: rgba(15,17,22,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  align-items: center; justify-content: center;
+}
+.modal-backdrop.open{ display: flex; animation: fadeIn .2s ease; }
+.modal{
+  width: min(560px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: var(--shadow-3);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transform: translateY(0);
+  animation: popIn .22s cubic-bezier(.16,.84,.44,1);
+}
+@keyframes popIn{ from{ opacity:0; transform: translateY(10px) scale(.98);} to{opacity:1; transform:none;} }
+.modal-hd{
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  display:flex; align-items:center; justify-content: space-between;
+}
+.modal-hd h2{
+  font-family: var(--display);
+  font-size: 18px; font-weight: 700; letter-spacing: -0.2px;
+  display:flex; align-items:center; gap: 10px;
+}
+.modal-hd h2 i{ color: var(--accent); width:18px; height:18px;}
+.modal-bd{ padding: 22px; }
+.modal-ft{
+  padding: 14px 22px;
+  border-top: 1px solid var(--line);
+  display:flex; justify-content: flex-end; gap: 8px;
+  background: var(--panel);
+}
+.form-row{
+  display: grid; grid-template-columns: 1fr; gap: 6px;
+  margin-bottom: 16px;
+}
+.form-row label{
+  font-size: 11.5px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.4px;
+  font-weight: 600;
+}
+.form-row select, .form-row input{
+  padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: #fff; font-size: 14px;
+}
+.form-row select:focus, .form-row input:focus{
+  outline: 2px solid var(--accent-soft); border-color: var(--accent);
+}
+.form-hint{ font-size: 12px; color: var(--muted); margin-top: 2px; }
+.seg{
+  display: inline-flex; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 4px; gap: 2px;
+}
+.seg button{
+  padding: 8px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  transition: background .18s ease, color .18s ease;
+}
+.seg button.active{
+  background: #fff; color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.switch{
+  display:inline-flex; align-items:center; gap: 10px;
+}
+.switch-track{
+  width: 42px; height: 24px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  position: relative;
+  transition: background .18s ease;
+}
+.switch-thumb{
+  width: 18px; height:18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  position: absolute; top: 2px; left: 2px;
+  transition: transform .2s ease, background .2s ease;
+}
+.switch-track.on{ background: var(--accent); border-color: var(--accent); }
+.switch-track.on .switch-thumb{ transform: translateX(18px); }
 
 /* ---------- Footer ---------- */
 .footer{
@@ -443,11 +629,14 @@ input, select{ font-family: inherit; color: var(--ink); }
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1100px){
+@media (max-width: 1180px){
   .col-8, .col-4, .col-6{ grid-column: span 12; }
   .trend-grid{ grid-template-columns: repeat(2, 1fr); }
   .wl-grid{ grid-template-columns: repeat(2, 1fr); }
   .h-chart{ height: 480px; }
+  .session-grid{ grid-template-columns: repeat(2, 1fr); }
+  .jr-stats{ grid-template-columns: repeat(3, 1fr); }
+  .jr-form{ grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 720px){
   .header-inner{
@@ -462,31 +651,37 @@ input, select{ font-family: inherit; color: var(--ink); }
   .calc form{ grid-template-columns: 1fr; }
   .calc .field.full{ grid-column: span 1; }
   .calc .result{ grid-column: span 1; }
+  .pivot-table{ grid-column: span 1; overflow-x: auto; }
   .h-chart{ height: 380px; }
   .h-heat, .h-cal{ height: 460px; }
   .brand-sub{ display:none; }
+  .session-grid{ grid-template-columns: 1fr; }
+  .jr-stats{ grid-template-columns: repeat(2, 1fr); }
+  .jr-form{ grid-template-columns: 1fr; }
+  .jr-table{ overflow-x: auto; }
+  .jr-table table{ min-width: 720px; }
 }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ========== HEADER ========== -->
+  <!-- ================= HEADER ================= -->
   <header class="header">
     <div class="header-inner">
       <div class="brand">
         <div class="brand-mark">TC</div>
         <div>
           <div class="brand-title">Trading Command Center</div>
-          <div class="brand-sub">Multi-Instrument Terminal · v1.0</div>
+          <div class="brand-sub">Multi-Instrument Terminal · v1.1</div>
         </div>
       </div>
 
       <div class="header-metrics" data-testid="header-metrics">
         <div class="metric" data-testid="clock-metric">
           <i data-lucide="clock-4"></i>
-          <span class="label">WIB</span>
-          <span class="value" id="clockWIB">—</span>
+          <span class="label" id="clockTzLabel">WIB</span>
+          <span class="value" id="clockLocal">—</span>
         </div>
         <div class="metric" data-testid="clock-utc-metric">
           <span class="label">UTC</span>
@@ -497,6 +692,11 @@ input, select{ font-family: inherit; color: var(--ink); }
           <span class="label">Forex</span>
           <span class="value" id="marketStatus">—</span>
         </div>
+        <div class="metric" data-testid="active-session-metric">
+          <i data-lucide="globe-2"></i>
+          <span class="label">Sesi</span>
+          <span class="value" id="activeSession">—</span>
+        </div>
         <div class="metric" data-testid="news-countdown-metric">
           <i data-lucide="megaphone"></i>
           <span class="label" id="newsLabel">High Impact</span>
@@ -505,6 +705,9 @@ input, select{ font-family: inherit; color: var(--ink); }
       </div>
 
       <div class="header-actions">
+        <button class="icon-btn" id="btnSettings" title="Pengaturan" data-testid="btn-settings">
+          <i data-lucide="settings"></i>
+        </button>
         <button class="icon-btn" id="btnRefresh" title="Muat ulang widget" data-testid="btn-refresh">
           <i data-lucide="refresh-cw"></i>
         </button>
@@ -515,14 +718,14 @@ input, select{ font-family: inherit; color: var(--ink); }
     </div>
   </header>
 
-  <!-- ========== TICKER TAPE ========== -->
+  <!-- ================= TICKER TAPE ================= -->
   <div class="tape-wrap">
     <div class="tradingview-widget-container">
       <div id="tvTape"></div>
     </div>
   </div>
 
-  <!-- ========== TABS ========== -->
+  <!-- ================= TABS ================= -->
   <div class="tabs-wrap">
     <nav class="tabs" role="tablist">
       <button class="tab active" data-tab="dashboard" data-testid="tab-dashboard">
@@ -531,29 +734,37 @@ input, select{ font-family: inherit; color: var(--ink); }
       <button class="tab" data-tab="trend" data-testid="tab-trend">
         <i data-lucide="activity"></i> Trend Analyzer
       </button>
+      <button class="tab" data-tab="sessions" data-testid="tab-sessions">
+        <i data-lucide="globe-2"></i> Sesi Global
+      </button>
+      <button class="tab" data-tab="crossrates" data-testid="tab-crossrates">
+        <i data-lucide="table-2"></i> Cross Rates &amp; Screener
+      </button>
+      <button class="tab" data-tab="calendar" data-testid="tab-calendar">
+        <i data-lucide="calendar-days"></i> Kalender Ekonomi
+      </button>
       <button class="tab" data-tab="watchlist" data-testid="tab-watchlist">
         <i data-lucide="star"></i> Watchlist
       </button>
       <button class="tab" data-tab="calc" data-testid="tab-calc">
         <i data-lucide="calculator"></i> Kalkulator
       </button>
+      <button class="tab" data-tab="journal" data-testid="tab-journal">
+        <i data-lucide="notebook-pen"></i> Journal
+      </button>
     </nav>
   </div>
 
-  <!-- ========== MAIN ========== -->
+  <!-- ================= MAIN ================= -->
   <main class="main">
 
-    <!-- ============ DASHBOARD VIEW ============ -->
+    <!-- ================ DASHBOARD ================ -->
     <section class="view active" id="view-dashboard" data-testid="view-dashboard">
       <div class="dash-grid">
 
-        <!-- Advanced Chart -->
         <div class="card col-8" data-testid="card-chart">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="candlestick-chart"></i>
-              Advanced Chart
-            </div>
+            <div class="card-title"><i data-lucide="candlestick-chart"></i> Advanced Chart</div>
             <div class="sym-select">
               <label class="muted" for="symbolSelect" style="font-size:12px;">Simbol</label>
               <select id="symbolSelect" class="select" data-testid="symbol-select">
@@ -568,60 +779,36 @@ input, select{ font-family: inherit; color: var(--ink); }
               </select>
             </div>
           </div>
-          <div class="card-bd">
-            <div id="tvChart" class="tv-host h-chart"></div>
-          </div>
+          <div class="card-bd"><div id="tvChart" class="tv-host h-chart"></div></div>
         </div>
 
-        <!-- Technical Analysis (matched with chart symbol) -->
         <div class="card col-4" data-testid="card-technical">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="gauge"></i>
-              Technical Analysis
-            </div>
+            <div class="card-title"><i data-lucide="gauge"></i> Technical Analysis</div>
             <span class="pill accent" id="taSymbolPill">—</span>
           </div>
-          <div class="card-bd">
-            <div id="tvTech" class="tv-host h-tech"></div>
-          </div>
+          <div class="card-bd"><div id="tvTech" class="tv-host h-tech"></div></div>
         </div>
 
-        <!-- Symbol Info -->
         <div class="card col-12" data-testid="card-symbol-info">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="info"></i>
-              Symbol Overview
-            </div>
+            <div class="card-title"><i data-lucide="info"></i> Symbol Overview</div>
             <span class="card-sub">Ringkasan simbol yang dipilih</span>
           </div>
-          <div class="card-bd">
-            <div id="tvSymInfo" class="tv-host h-info"></div>
-          </div>
+          <div class="card-bd"><div id="tvSymInfo" class="tv-host h-info"></div></div>
         </div>
 
-        <!-- Market Overview -->
         <div class="card col-6" data-testid="card-market-overview">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="line-chart"></i>
-              Market Overview
-            </div>
+            <div class="card-title"><i data-lucide="line-chart"></i> Market Overview</div>
             <span class="card-sub">Indices · Forex · Crypto</span>
           </div>
-          <div class="card-bd">
-            <div id="tvMarket" class="tv-host h-mkt"></div>
-          </div>
+          <div class="card-bd"><div id="tvMarket" class="tv-host h-mkt"></div></div>
         </div>
 
-        <!-- Mini Symbols (multi) -->
         <div class="card col-6" data-testid="card-mini-symbols">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="layers"></i>
-              Multi-Instrument Snapshot
-            </div>
+            <div class="card-title"><i data-lucide="layers"></i> Multi-Instrument Snapshot</div>
             <span class="card-sub">4 instrumen inti</span>
           </div>
           <div class="card-bd pad">
@@ -634,38 +821,26 @@ input, select{ font-family: inherit; color: var(--ink); }
           </div>
         </div>
 
-        <!-- Forex Heatmap -->
         <div class="card col-12" data-testid="card-heatmap">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="flame"></i>
-              Forex Heatmap
-            </div>
-            <span class="card-sub">Kekuatan mata uang mayor secara real-time</span>
+            <div class="card-title"><i data-lucide="flame"></i> Forex Heatmap</div>
+            <span class="card-sub">Kekuatan mata uang mayor real-time</span>
           </div>
-          <div class="card-bd">
-            <div id="tvHeatmap" class="tv-host h-heat"></div>
-          </div>
+          <div class="card-bd"><div id="tvHeatmap" class="tv-host h-heat"></div></div>
         </div>
 
-        <!-- Economic Calendar -->
-        <div class="card col-12" data-testid="card-calendar">
+        <div class="card col-12" data-testid="card-calendar-dash">
           <div class="card-hd">
-            <div class="card-title">
-              <i data-lucide="calendar-days"></i>
-              Economic Calendar
-            </div>
-            <span class="card-sub">Fokus: importance tinggi</span>
+            <div class="card-title"><i data-lucide="calendar-days"></i> Economic Calendar (TradingView)</div>
+            <span class="card-sub">Klik tab <b>Kalender Ekonomi</b> untuk versi Investing.com &amp; MQL5</span>
           </div>
-          <div class="card-bd">
-            <div id="tvCal" class="tv-host h-cal"></div>
-          </div>
+          <div class="card-bd"><div id="tvCal" class="tv-host h-cal"></div></div>
         </div>
 
       </div>
     </section>
 
-    <!-- ============ TREND ANALYZER VIEW ============ -->
+    <!-- ================ TREND ANALYZER ================ -->
     <section class="view" id="view-trend" data-testid="view-trend">
       <div class="trend-controls">
         <div class="pill accent"><i data-lucide="activity"></i>&nbsp;Trend Analyzer</div>
@@ -686,13 +861,175 @@ input, select{ font-family: inherit; color: var(--ink); }
           Sinyal Technical dari TradingView untuk 6 timeframe: M1, M5, M15, H1, H4, D1
         </span>
       </div>
+      <div class="trend-grid" id="trendGrid"></div>
+    </section>
 
-      <div class="trend-grid" id="trendGrid">
-        <!-- Populated by JS -->
+    <!-- ================ SESSIONS ================ -->
+    <section class="view" id="view-sessions" data-testid="view-sessions">
+      <div style="margin-bottom:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="pill accent"><i data-lucide="globe-2"></i>&nbsp;Sesi Trading Global</span>
+        <span class="muted" style="font-size:12.5px;">
+          4 sesi utama Forex + status live berdasarkan zona waktu Anda. Waktu bisa diubah lewat
+          <b>Pengaturan</b> ⚙️.
+        </span>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i data-lucide="timer"></i> Live Session Board</div>
+          <span class="card-sub" id="sessionsTzLabel">—</span>
+        </div>
+        <div class="card-bd pad">
+          <div class="session-grid" id="sessionGrid"></div>
+        </div>
+      </div>
+
+      <div class="dash-grid" style="margin-top:16px;">
+        <div class="card col-6" data-testid="card-session-info">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="info"></i> Karakteristik Sesi</div>
+            <span class="card-sub">Panduan singkat untuk trading di setiap sesi</span>
+          </div>
+          <div class="card-bd pad" style="font-size:13.5px; line-height:1.7;">
+            <p><b>Sydney (22:00–07:00 UTC)</b> — Volatilitas rendah. Fokus: AUD, NZD.</p>
+            <p><b>Tokyo (00:00–09:00 UTC)</b> — Fokus: JPY crosses, saham Nikkei, dan Gold pagi hari.</p>
+            <p><b>London (08:00–17:00 UTC)</b> — Sesi tersibuk. Fokus: EUR, GBP, CHF. Volatilitas tinggi.</p>
+            <p><b>New York (13:00–22:00 UTC)</b> — Overlap dengan London (13:00–17:00 UTC) = window paling ramai. Fokus: USD, indeks AS, Gold.</p>
+            <p style="margin-top:8px; color:var(--muted);">*Waktu buka/tutup mengikuti standar interbank; hari libur nasional dapat mempengaruhi likuiditas.</p>
+          </div>
+        </div>
+
+        <div class="card col-6" data-testid="card-fear-greed">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="thermometer"></i> Volatilitas Instrumen Utama</div>
+            <span class="card-sub">Mini chart via TradingView</span>
+          </div>
+          <div class="card-bd pad">
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap:12px;">
+              <div id="sMini1" class="tv-host h-mini"></div>
+              <div id="sMini2" class="tv-host h-mini"></div>
+              <div id="sMini3" class="tv-host h-mini"></div>
+              <div id="sMini4" class="tv-host h-mini"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ============ WATCHLIST VIEW ============ -->
+    <!-- ================ CROSS RATES & SCREENER ================ -->
+    <section class="view" id="view-crossrates" data-testid="view-crossrates">
+      <div class="dash-grid">
+
+        <div class="card col-6" data-testid="card-crossrates">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="table-2"></i> Forex Cross Rates</div>
+            <span class="card-sub">Matriks kurs & % perubahan</span>
+          </div>
+          <div class="card-bd"><div id="tvCross" class="tv-host h-cross"></div></div>
+        </div>
+
+        <div class="card col-6" data-testid="card-currency-conv">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="arrow-left-right"></i> Currency Converter</div>
+            <span class="card-sub">Konversi cepat mata uang mayor</span>
+          </div>
+          <div class="card-bd"><div id="tvConverter" class="tv-host h-conv"></div></div>
+        </div>
+
+        <div class="card col-12" data-testid="card-screener">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="filter"></i> Screener</div>
+            <div class="mini-tabs" id="screenerTabs">
+              <button class="mini-tab active" data-screen="forex" data-testid="screen-tab-forex">Forex</button>
+              <button class="mini-tab" data-screen="crypto" data-testid="screen-tab-crypto">Crypto</button>
+              <button class="mini-tab" data-screen="stock" data-testid="screen-tab-stock">Stocks</button>
+              <button class="mini-tab" data-screen="cfd" data-testid="screen-tab-cfd">CFD</button>
+            </div>
+          </div>
+          <div class="card-bd"><div id="tvScreener" class="tv-host h-screener"></div></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================ MULTI-SOURCE CALENDAR ================ -->
+    <section class="view" id="view-calendar" data-testid="view-calendar">
+      <div style="margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <span class="pill accent"><i data-lucide="calendar-days"></i>&nbsp;Kalender Ekonomi Multi-Sumber</span>
+          <span class="muted" style="font-size:12.5px;">
+            Bandingkan agenda ekonomi dari 3 sumber besar: TradingView, Investing.com, dan MQL5.
+          </span>
+        </div>
+        <div class="mini-tabs" id="calSourceTabs">
+          <button class="mini-tab active" data-src="tv"        data-testid="cal-src-tv">TradingView</button>
+          <button class="mini-tab"        data-src="investing" data-testid="cal-src-investing">Investing.com</button>
+          <button class="mini-tab"        data-src="mql5"      data-testid="cal-src-mql5">MQL5</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title"><i data-lucide="newspaper"></i> Kalender <span id="calSrcName">TradingView</span></div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="card-sub" id="calSrcInfo">Fokus: importance tinggi</span>
+            <a class="btn" id="calOpenExt" href="#" target="_blank" rel="noopener" data-testid="cal-open-ext">
+              <i data-lucide="external-link"></i> Buka di tab baru
+            </a>
+          </div>
+        </div>
+        <div class="card-bd" style="position:relative;">
+          <div id="calSlotTV" class="tv-host" style="height:640px;"></div>
+          <iframe id="calSlotInv"  class="calendar-frame hidden" style="height:640px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <iframe id="calSlotMql5" class="calendar-frame hidden" style="height:640px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div id="calNotice" class="hidden" style="position:absolute; top:12px; left:12px; right:12px; padding:10px 14px; background:#fff8e6; border:1px solid #f0d78a; border-radius:10px; font-size:12.5px; color:#7a5a10;">
+            <i data-lucide="alert-triangle" style="width:14px;height:14px; vertical-align:-2px;"></i>
+            Beberapa sumber (Investing / MQL5) kadang memblokir embedding. Jika kalender kosong, klik <b>Buka di tab baru ↗</b> di kanan atas.
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid" style="margin-top:16px;">
+        <div class="card col-4" data-testid="cal-link-ff">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="link"></i> ForexFactory Calendar</div>
+            <span class="card-sub">Sumber populer trader retail</span>
+          </div>
+          <div class="card-bd pad">
+            <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Klik untuk membuka kalender ForexFactory di tab baru — sumber referensi standar bagi trader forex profesional.</p>
+            <a class="btn btn-accent" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener">
+              <i data-lucide="external-link"></i> Buka ForexFactory
+            </a>
+          </div>
+        </div>
+        <div class="card col-4" data-testid="cal-link-myfxbook">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="link"></i> MyFxBook Calendar</div>
+            <span class="card-sub">Termasuk konsensus &amp; trend analyst</span>
+          </div>
+          <div class="card-bd pad">
+            <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Kalender ekonomi lengkap dengan filter negara, kekuatan sinyal, dan riwayat data.</p>
+            <a class="btn btn-accent" href="https://www.myfxbook.com/forex-economic-calendar" target="_blank" rel="noopener">
+              <i data-lucide="external-link"></i> Buka MyFxBook
+            </a>
+          </div>
+        </div>
+        <div class="card col-4" data-testid="cal-link-dailyfx">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="link"></i> DailyFX Calendar</div>
+            <span class="card-sub">IG Group · Analisa berita</span>
+          </div>
+          <div class="card-bd pad">
+            <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Analisa mendalam per event ekonomi + arah dampak pada mata uang mayor.</p>
+            <a class="btn btn-accent" href="https://www.dailyfx.com/economic-calendar" target="_blank" rel="noopener">
+              <i data-lucide="external-link"></i> Buka DailyFX
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ WATCHLIST ================ -->
     <section class="view" id="view-watchlist" data-testid="view-watchlist">
       <div class="wl-controls">
         <input class="wl-input" id="wlInput" type="text" placeholder="Contoh: FX:EURUSD, OANDA:XAUUSD, BINANCE:BTCUSDT, NASDAQ:AAPL" data-testid="wl-input" />
@@ -707,7 +1044,7 @@ input, select{ font-family: inherit; color: var(--ink); }
         </span>
       </div>
 
-      <div id="wlEmpty" class="wl-empty">
+      <div id="wlEmpty" class="empty">
         <i data-lucide="bookmark-plus" style="width:22px;height:22px;"></i>
         <div style="margin-top:8px; font-weight:600; color:var(--ink);">Watchlist Anda kosong</div>
         <div style="font-size:12.5px;">Tambahkan simbol favorit untuk melihat ringkasan mini chart di sini.</div>
@@ -716,18 +1053,18 @@ input, select{ font-family: inherit; color: var(--ink); }
       <div class="wl-grid" id="wlGrid"></div>
     </section>
 
-    <!-- ============ CALCULATOR VIEW ============ -->
+    <!-- ================ CALCULATOR ================ -->
     <section class="view" id="view-calc" data-testid="view-calc">
       <div style="margin-bottom:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <span class="pill accent"><i data-lucide="calculator"></i>&nbsp;Trading Calculator Suite</span>
         <span class="muted" style="font-size:12.5px;">
-          7 kalkulator esensial untuk manajemen risiko dan money management.
+          10 kalkulator esensial untuk manajemen risiko, position sizing, dan proyeksi pertumbuhan.
         </span>
       </div>
 
       <div class="calc-grid">
 
-        <!-- 1. PIP CALCULATOR -->
+        <!-- 1. PIP -->
         <div class="card calc" data-testid="calc-pip">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="ruler"></i> Pip Calculator</div>
@@ -750,11 +1087,11 @@ input, select{ font-family: inherit; color: var(--ink); }
               <input type="number" name="lot" step="0.01" value="1" data-testid="pip-lot" />
             </div>
             <div class="field">
-              <label>Harga saat ini (untuk cross/JPY)</label>
+              <label>Harga saat ini (JPY/Cross)</label>
               <input type="number" name="price" step="0.0001" value="1" data-testid="pip-price" />
             </div>
             <div class="field">
-              <label>Kurs quote→USD (khusus cross)</label>
+              <label>Kurs quote→USD (Cross)</label>
               <input type="number" name="quoteUSD" step="0.0001" value="1" data-testid="pip-quote" />
             </div>
             <div class="result" data-testid="pip-result">
@@ -764,7 +1101,7 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
-        <!-- 2. LOT SIZE CALCULATOR -->
+        <!-- 2. LOT SIZE -->
         <div class="card calc" data-testid="calc-lot">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="scale"></i> Lot Size Calculator</div>
@@ -794,7 +1131,7 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
-        <!-- 3. RISK CALCULATOR -->
+        <!-- 3. RISK -->
         <div class="card calc" data-testid="calc-risk">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="shield-alert"></i> Risk Calculator</div>
@@ -820,7 +1157,7 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
-        <!-- 4. RISK REWARD CALCULATOR -->
+        <!-- 4. RR -->
         <div class="card calc" data-testid="calc-rr">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="git-compare"></i> Risk / Reward Calculator</div>
@@ -854,7 +1191,7 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
-        <!-- 5. PROFIT CALCULATOR -->
+        <!-- 5. PROFIT -->
         <div class="card calc" data-testid="calc-profit">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="trending-up"></i> Profit Calculator</div>
@@ -895,7 +1232,7 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
-        <!-- 6. MARGIN CALCULATOR -->
+        <!-- 6. MARGIN -->
         <div class="card calc" data-testid="calc-margin">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="wallet"></i> Margin Calculator</div>
@@ -925,11 +1262,11 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
-        <!-- 7. DRAWDOWN CALCULATOR -->
+        <!-- 7. DRAWDOWN -->
         <div class="card calc" data-testid="calc-drawdown">
           <div class="card-hd">
             <div class="card-title"><i data-lucide="trending-down"></i> Drawdown Calculator</div>
-            <span class="card-sub">DD & recovery yang dibutuhkan</span>
+            <span class="card-sub">DD & recovery</span>
           </div>
           <form id="formDD" onsubmit="return false;">
             <div class="field">
@@ -948,119 +1285,494 @@ input, select{ font-family: inherit; color: var(--ink); }
           </form>
         </div>
 
+        <!-- 8. PIVOT -->
+        <div class="card calc" data-testid="calc-pivot">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="crosshair"></i> Pivot Points Calculator</div>
+            <span class="card-sub">Classic · Fibonacci · Camarilla</span>
+          </div>
+          <form id="formPivot" onsubmit="return false;">
+            <div class="field">
+              <label>High (sesi sebelumnya)</label>
+              <input type="number" name="high" step="0.00001" value="2020" data-testid="pivot-high" />
+            </div>
+            <div class="field">
+              <label>Low (sesi sebelumnya)</label>
+              <input type="number" name="low" step="0.00001" value="1980" data-testid="pivot-low" />
+            </div>
+            <div class="field">
+              <label>Close (sesi sebelumnya)</label>
+              <input type="number" name="close" step="0.00001" value="2005" data-testid="pivot-close" />
+            </div>
+            <div class="field">
+              <label>Metode</label>
+              <select name="method" data-testid="pivot-method">
+                <option value="classic">Classic</option>
+                <option value="fibonacci">Fibonacci</option>
+                <option value="camarilla">Camarilla</option>
+              </select>
+            </div>
+            <div class="pivot-table" data-testid="pivot-result">
+              <table>
+                <thead>
+                  <tr><th>Level</th><th>Harga</th><th>Level</th><th>Harga</th></tr>
+                </thead>
+                <tbody id="pivotTBody">
+                  <tr><td>PP</td><td id="pvPP" class="pp">—</td><td></td><td></td></tr>
+                  <tr><td>R1</td><td id="pvR1" class="res">—</td><td>S1</td><td id="pvS1" class="sup">—</td></tr>
+                  <tr><td>R2</td><td id="pvR2" class="res">—</td><td>S2</td><td id="pvS2" class="sup">—</td></tr>
+                  <tr><td>R3</td><td id="pvR3" class="res">—</td><td>S3</td><td id="pvS3" class="sup">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+
+        <!-- 9. FIBONACCI -->
+        <div class="card calc" data-testid="calc-fibo">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="waves"></i> Fibonacci Retracement / Extension</div>
+            <span class="card-sub">Level 0 – 261.8%</span>
+          </div>
+          <form id="formFibo" onsubmit="return false;">
+            <div class="field">
+              <label>Harga awal (start)</label>
+              <input type="number" name="start" step="0.00001" value="2000" data-testid="fibo-start" />
+            </div>
+            <div class="field">
+              <label>Harga akhir (end)</label>
+              <input type="number" name="end" step="0.00001" value="2100" data-testid="fibo-end" />
+            </div>
+            <div class="field full">
+              <label>Arah swing</label>
+              <select name="dir" data-testid="fibo-dir">
+                <option value="up">Naik (retracement dari swing high)</option>
+                <option value="down">Turun (retracement dari swing low)</option>
+              </select>
+            </div>
+            <div class="pivot-table" data-testid="fibo-result">
+              <table>
+                <thead>
+                  <tr><th>Level</th><th>Harga</th><th>Level</th><th>Harga</th></tr>
+                </thead>
+                <tbody id="fiboTBody"></tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+
+        <!-- 10. COMPOUND -->
+        <div class="card calc" data-testid="calc-compound">
+          <div class="card-hd">
+            <div class="card-title"><i data-lucide="line-chart"></i> Compound Growth Calculator</div>
+            <span class="card-sub">Proyeksi akumulasi profit trading</span>
+          </div>
+          <form id="formCompound" onsubmit="return false;">
+            <div class="field">
+              <label>Modal awal ($)</label>
+              <input type="number" name="init" step="0.01" value="1000" data-testid="cmp-init" />
+            </div>
+            <div class="field">
+              <label>Return per periode (%)</label>
+              <input type="number" name="rate" step="0.01" value="5" data-testid="cmp-rate" />
+            </div>
+            <div class="field">
+              <label>Jumlah periode</label>
+              <input type="number" name="n" step="1" value="24" data-testid="cmp-n" />
+            </div>
+            <div class="field">
+              <label>Periode</label>
+              <select name="periodType" data-testid="cmp-period">
+                <option value="week">Mingguan</option>
+                <option value="month">Bulanan</option>
+                <option value="day">Harian</option>
+              </select>
+            </div>
+            <div class="result strong" data-testid="cmp-result">
+              <div class="r-row"><span class="r-label">Nilai akhir</span><span class="r-value" id="cmpFinal">—</span></div>
+              <div class="r-row"><span class="r-label">Total profit</span><span class="r-value" id="cmpProfit">—</span></div>
+              <div class="r-row"><span class="r-label">Return total</span><span class="r-value" id="cmpReturn">—</span></div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================ JOURNAL ================ -->
+    <section class="view" id="view-journal" data-testid="view-journal">
+      <div style="margin-bottom:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="pill accent"><i data-lucide="notebook-pen"></i>&nbsp;Trade Journal</span>
+        <span class="muted" style="font-size:12.5px;">
+          Catat setiap trade & lihat statistik performa. Data 100% lokal di browser Anda (LocalStorage).
+        </span>
+      </div>
+
+      <!-- Stats -->
+      <div class="jr-stats">
+        <div class="stat-card"><div class="l">Total Trades</div><div class="v" id="jrTotal">0</div></div>
+        <div class="stat-card"><div class="l">Win-Rate</div><div class="v accent" id="jrWinRate">—</div></div>
+        <div class="stat-card"><div class="l">Wins</div><div class="v bull" id="jrWins">0</div></div>
+        <div class="stat-card"><div class="l">Losses</div><div class="v bear" id="jrLoss">0</div></div>
+        <div class="stat-card"><div class="l">Total P/L</div><div class="v" id="jrPL">—</div></div>
+        <div class="stat-card"><div class="l">Avg. RR</div><div class="v" id="jrAvgRR">—</div></div>
+      </div>
+
+      <!-- Form -->
+      <div class="jr-controls">
+        <form id="jrForm" class="jr-form" onsubmit="return false;">
+          <label>Tanggal
+            <input type="date" name="date" required data-testid="jr-date" />
+          </label>
+          <label>Simbol
+            <input type="text" name="symbol" placeholder="XAUUSD" required data-testid="jr-symbol" />
+          </label>
+          <label>Arah
+            <select name="dir" data-testid="jr-dir">
+              <option value="long">Long</option>
+              <option value="short">Short</option>
+            </select>
+          </label>
+          <label>Entry
+            <input type="number" step="0.00001" name="entry" required data-testid="jr-entry" />
+          </label>
+          <label>SL
+            <input type="number" step="0.00001" name="sl" data-testid="jr-sl" />
+          </label>
+          <label>TP
+            <input type="number" step="0.00001" name="tp" data-testid="jr-tp" />
+          </label>
+          <label>Lot
+            <input type="number" step="0.01" name="lot" value="0.1" data-testid="jr-lot" />
+          </label>
+          <label>Hasil ($)
+            <input type="number" step="0.01" name="pnl" placeholder="+100 / -50" data-testid="jr-pnl" />
+          </label>
+          <label>Outcome
+            <select name="outcome" data-testid="jr-outcome">
+              <option value="open">Open</option>
+              <option value="win">Win</option>
+              <option value="loss">Loss</option>
+              <option value="be">Break-even</option>
+            </select>
+          </label>
+          <label>Strategi
+            <input type="text" name="strategy" placeholder="Breakout, Pullback…" data-testid="jr-strategy" />
+          </label>
+          <label class="full">Catatan
+            <textarea name="notes" placeholder="Analisa singkat, alasan entry, hasil review…" data-testid="jr-notes"></textarea>
+          </label>
+          <div class="full" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-accent" id="jrAddBtn" data-testid="jr-add-btn">
+              <i data-lucide="plus"></i> Tambah Trade
+            </button>
+            <button class="btn" id="jrExportBtn" data-testid="jr-export-btn">
+              <i data-lucide="download"></i> Export JSON
+            </button>
+            <button class="btn" id="jrClearBtn" data-testid="jr-clear-btn">
+              <i data-lucide="trash-2"></i> Hapus Semua
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div id="jrEmpty" class="empty">
+        <i data-lucide="book-open" style="width:22px;height:22px;"></i>
+        <div style="margin-top:8px; font-weight:600; color:var(--ink);">Journal masih kosong</div>
+        <div style="font-size:12.5px;">Isi form di atas untuk menambahkan trade pertama Anda.</div>
+      </div>
+
+      <div class="jr-table hidden" id="jrTableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Simbol</th>
+              <th>Arah</th>
+              <th class="num">Entry</th>
+              <th class="num">SL</th>
+              <th class="num">TP</th>
+              <th class="num">Lot</th>
+              <th class="num">P/L</th>
+              <th>Outcome</th>
+              <th>Strategi</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="jrTBody"></tbody>
+        </table>
       </div>
     </section>
 
   </main>
 
   <footer class="footer">
-    <div>
-      Trading Command Center · Dibangun dengan widget resmi
-      <a href="https://www.tradingview.com" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600;">TradingView</a>.
-      Data disediakan oleh TradingView. Aplikasi ini bukan saran investasi.
-    </div>
+    Trading Command Center · Widget resmi
+    <a href="https://www.tradingview.com" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600;">TradingView</a> ·
+    <a href="https://www.investing.com/economic-calendar/" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600;">Investing.com</a> ·
+    <a href="https://www.mql5.com/en/economic-calendar" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600;">MQL5</a>.
+    Aplikasi ini bukan saran investasi.
   </footer>
 
 </div>
 
-<!-- ==========================================================
-     SCRIPT
-     ========================================================== -->
+<!-- ================= SETTINGS MODAL ================= -->
+<div class="modal-backdrop" id="settingsModal" data-testid="settings-modal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-hd">
+      <h2><i data-lucide="settings"></i> Pengaturan</h2>
+      <button class="icon-btn" id="settingsCloseBtn" title="Tutup" data-testid="settings-close">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <label for="setTimezone">Zona Waktu</label>
+        <select id="setTimezone" data-testid="set-timezone">
+          <optgroup label="Indonesia">
+            <option value="Asia/Jakarta">WIB · Jakarta (UTC+7)</option>
+            <option value="Asia/Makassar">WITA · Makassar (UTC+8)</option>
+            <option value="Asia/Jayapura">WIT · Jayapura (UTC+9)</option>
+          </optgroup>
+          <optgroup label="Umum">
+            <option value="UTC">UTC · GMT (UTC±0)</option>
+          </optgroup>
+          <optgroup label="Asia">
+            <option value="Asia/Tokyo">Tokyo — JST (UTC+9)</option>
+            <option value="Asia/Shanghai">Shanghai — CST (UTC+8)</option>
+            <option value="Asia/Hong_Kong">Hong Kong — HKT (UTC+8)</option>
+            <option value="Asia/Singapore">Singapore — SGT (UTC+8)</option>
+            <option value="Asia/Kolkata">Mumbai — IST (UTC+5:30)</option>
+            <option value="Asia/Dubai">Dubai — GST (UTC+4)</option>
+          </optgroup>
+          <optgroup label="Eropa">
+            <option value="Europe/London">London — GMT/BST</option>
+            <option value="Europe/Frankfurt">Frankfurt — CET</option>
+            <option value="Europe/Paris">Paris — CET</option>
+            <option value="Europe/Zurich">Zurich — CET</option>
+            <option value="Europe/Moscow">Moscow — MSK (UTC+3)</option>
+          </optgroup>
+          <optgroup label="Amerika">
+            <option value="America/New_York">New York — EST/EDT</option>
+            <option value="America/Chicago">Chicago — CST/CDT</option>
+            <option value="America/Los_Angeles">Los Angeles — PST/PDT</option>
+            <option value="America/Sao_Paulo">São Paulo — BRT</option>
+          </optgroup>
+          <optgroup label="Oseania">
+            <option value="Australia/Sydney">Sydney — AEST/AEDT</option>
+            <option value="Pacific/Auckland">Auckland — NZST/NZDT</option>
+          </optgroup>
+        </select>
+        <div class="form-hint">Jam header, sesi global, dan countdown akan mengikuti zona ini.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Format Waktu</label>
+        <div class="seg" id="timeFormatSeg" data-testid="set-timeformat">
+          <button type="button" data-fmt="24h" data-testid="fmt-24h">24 Jam</button>
+          <button type="button" data-fmt="12h" data-testid="fmt-12h">12 Jam (AM/PM)</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Tampilkan Detik</label>
+        <div class="switch" id="showSecondsSwitch" data-testid="set-showseconds">
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+          <span class="muted" id="showSecondsLabel" style="font-size:13px;">Aktif</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Sumber Kalender Ekonomi Default</label>
+        <div class="seg" id="calDefaultSeg" data-testid="set-caldefault">
+          <button type="button" data-src="tv">TradingView</button>
+          <button type="button" data-src="investing">Investing.com</button>
+          <button type="button" data-src="mql5">MQL5</button>
+        </div>
+        <div class="form-hint">Sumber pertama yang dibuka saat masuk tab Kalender Ekonomi.</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn" id="settingsResetBtn" data-testid="settings-reset">Reset Default</button>
+      <button class="btn btn-primary" id="settingsSaveBtn" data-testid="settings-save">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SCRIPT ================= -->
 <script>
-/* ========== 1. STATE & HELPERS ========== */
+/* =====================================================================
+   TRADING COMMAND CENTER — JavaScript
+   ===================================================================== */
+
+/* ========== 1. STATE, SETTINGS & PERSISTENCE ========== */
+const LS = {
+  WL: 'tcc.watchlist.v1',
+  SET: 'tcc.settings.v1',
+  JR: 'tcc.journal.v1',
+};
+
+const DEFAULT_SETTINGS = {
+  timezone: 'Asia/Jakarta',
+  timeFormat: '24h',    // '24h' | '12h'
+  showSeconds: true,
+  calDefault: 'tv',     // 'tv' | 'investing' | 'mql5'
+};
+
 const state = {
   symbol: 'OANDA:XAUUSD',
   trendSymbol: 'OANDA:XAUUSD',
   watchlist: [],
+  journal: [],
+  screener: 'forex',
+  calSource: 'tv',
+  settings: { ...DEFAULT_SETTINGS },
 };
 
 const $ = (sel, root=document) => root.querySelector(sel);
 const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-const fmt = (n, digits=2) => {
-  if (n === null || n === undefined || isNaN(n) || !isFinite(n)) return '—';
-  return Number(n).toLocaleString('id-ID', {minimumFractionDigits: digits, maximumFractionDigits: digits});
-};
-const fmtUSD = (n, digits=2) => (n===null||isNaN(n)||!isFinite(n)) ? '—' : '$' + fmt(n, digits);
 
-/* Human-readable simbol dari TradingView key */
+const fmt = (n, digits=2) => (n===null||n===undefined||isNaN(n)||!isFinite(n))
+  ? '—' : Number(n).toLocaleString('id-ID', {minimumFractionDigits: digits, maximumFractionDigits: digits});
+const fmtUSD = (n, digits=2) => (n===null||isNaN(n)||!isFinite(n)) ? '—' : '$' + fmt(n, digits);
+const fmtSigned = (n) => (n>0?'+':'') + fmt(n, 2);
+
+function loadJSON(key, fallback){
+  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+function loadSettings(){
+  state.settings = { ...DEFAULT_SETTINGS, ...loadJSON(LS.SET, {}) };
+}
+function saveSettings(){ saveJSON(LS.SET, state.settings); }
+
+/* Get abbreviation / short label from timezone id */
+function tzShortLabel(tz){
+  const short = {
+    'Asia/Jakarta':'WIB','Asia/Makassar':'WITA','Asia/Jayapura':'WIT',
+    'UTC':'UTC',
+    'Asia/Tokyo':'JST','Asia/Shanghai':'CST','Asia/Hong_Kong':'HKT',
+    'Asia/Singapore':'SGT','Asia/Kolkata':'IST','Asia/Dubai':'GST',
+    'Europe/London':'LON','Europe/Frankfurt':'FRA','Europe/Paris':'PAR',
+    'Europe/Zurich':'ZUR','Europe/Moscow':'MSK',
+    'America/New_York':'NY','America/Chicago':'CHI','America/Los_Angeles':'LA',
+    'America/Sao_Paulo':'SAO',
+    'Australia/Sydney':'SYD','Pacific/Auckland':'AKL',
+  };
+  return short[tz] || tz.split('/').pop();
+}
+
+/* Symbol readable label */
 const symbolLabel = (tv) => {
   const map = {
-    'OANDA:XAUUSD':'XAUUSD',
-    'OANDA:XAGUSD':'XAGUSD',
-    'OANDA:EURUSD':'EURUSD',
-    'OANDA:GBPUSD':'GBPUSD',
-    'OANDA:USDJPY':'USDJPY',
-    'OANDA:NAS100USD':'NAS100',
-    'OANDA:US30USD':'US30',
+    'OANDA:XAUUSD':'XAUUSD','OANDA:XAGUSD':'XAGUSD',
+    'OANDA:EURUSD':'EURUSD','OANDA:GBPUSD':'GBPUSD','OANDA:USDJPY':'USDJPY',
+    'OANDA:NAS100USD':'NAS100','OANDA:US30USD':'US30',
     'BINANCE:BTCUSDT':'BTCUSD',
   };
   return map[tv] || tv.split(':').pop();
 };
 
-/* ========== 2. HEADER: CLOCK, MARKET, NEWS COUNTDOWN ========== */
-function updateClock(){
-  const now = new Date();
-  const optsWIB = { timeZone:'Asia/Jakarta', hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'};
-  const optsUTC = { timeZone:'UTC',           hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'};
-  $('#clockWIB').textContent = new Intl.DateTimeFormat('id-ID', optsWIB).format(now);
-  $('#clockUTC').textContent = new Intl.DateTimeFormat('id-ID', optsUTC).format(now);
-  updateMarketStatus(now);
-  updateNewsCountdown(now);
+/* ========== 2. CLOCK, MARKET STATUS, NEWS COUNTDOWN ========== */
+
+/** Format Date -> "HH:MM" or "HH:MM:SS" honoring settings & timezone. */
+function formatTime(d, tz){
+  const { timeFormat, showSeconds } = state.settings;
+  const opts = {
+    timeZone: tz,
+    hour12: timeFormat === '12h',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+  if (showSeconds) opts.second = '2-digit';
+  // Use 'en-GB' so numeric look consistent then normalize AM/PM if any
+  const s = new Intl.DateTimeFormat('en-GB', opts).format(d);
+  return s.replace(/\s+/g,' ');
 }
 
-/* Forex market schedule:
-   Open: Sunday 22:00 UTC → Friday 22:00 UTC (approx).
-   We use 21:00 UTC Friday close for safety (session ends at NY close).
-*/
+function updateClock(){
+  const now = new Date();
+  const tz = state.settings.timezone;
+
+  $('#clockLocal').textContent = formatTime(now, tz);
+  $('#clockUTC').textContent   = formatTime(now, 'UTC');
+  $('#clockTzLabel').textContent = tzShortLabel(tz);
+
+  updateMarketStatus(now);
+  updateActiveSession(now);
+  updateNewsCountdown(now);
+  // Only update session board if it has been built (avoids null-ref on init)
+  if (window._sessionsLoaded) updateSessionBoard(now);
+}
+
+/* Forex market: Sunday 22:00 UTC → Friday 21:00 UTC */
 function updateMarketStatus(now){
-  const dow = now.getUTCDay();  // 0=Sun ... 6=Sat
+  const dow = now.getUTCDay();
   const h = now.getUTCHours();
   let open = false;
-  if (dow === 0 && h >= 22) open = true;                       // Sunday from 22:00 UTC
-  else if (dow >= 1 && dow <= 4) open = true;                  // Mon-Thu all day
-  else if (dow === 5 && h < 21) open = true;                   // Friday until 21:00 UTC
-  const dot = $('#marketDot');
-  const label = $('#marketStatus');
+  if (dow === 0 && h >= 22) open = true;
+  else if (dow >= 1 && dow <= 4) open = true;
+  else if (dow === 5 && h < 21) open = true;
+  const dot = $('#marketDot'), label = $('#marketStatus');
   if (open){ dot.className='dot open'; label.textContent='OPEN'; }
   else { dot.className='dot closed'; label.textContent='CLOSED'; }
 }
 
-/* Compute countdown to next high-impact event.
-   Simple estimator using two recurring anchors:
-   - US NFP: first Friday of the month @ 13:30 UTC (20:30 WIB)
-   - US CPI: 13th of the month @ 13:30 UTC (approximate)
-   Returns nearest future event.
-*/
+/* ---- Session definitions (UTC hours). Wraps across midnight allowed. ---- */
+const SESSIONS = [
+  { key:'sydney', name:'Sydney',   flag:'🇦🇺', open: 22, close: 7  },
+  { key:'tokyo',  name:'Tokyo',    flag:'🇯🇵', open: 0,  close: 9  },
+  { key:'london', name:'London',   flag:'🇬🇧', open: 8,  close: 17 },
+  { key:'ny',     name:'New York', flag:'🇺🇸', open: 13, close: 22 },
+];
+
+/** Is session open at given UTC time? Support wrap-around. */
+function sessionIsOpen(sess, now){
+  const h = now.getUTCHours() + now.getUTCMinutes()/60;
+  const {open, close} = sess;
+  if (open < close) return h >= open && h < close;
+  return h >= open || h < close;
+}
+
+/** Return active session names as list */
+function activeSessions(now){
+  return SESSIONS.filter(s => sessionIsOpen(s, now)).map(s => s.name);
+}
+function updateActiveSession(now){
+  const act = activeSessions(now);
+  $('#activeSession').textContent = act.length ? act.join(' + ') : 'Closed';
+}
+
+/* Next high impact event estimator */
 function nextHighImpactEvent(now){
   const cands = [];
-
-  // Compute NFP for this and next month
+  // NFP first Friday
   for (let addM=0; addM<3; addM++){
     const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth()+addM, 1, 13, 30, 0));
-    // first Friday
     while (d.getUTCDay() !== 5) d.setUTCDate(d.getUTCDate()+1);
     cands.push({ name:'US Nonfarm Payrolls', when:new Date(d.getTime()) });
   }
-  // CPI approx 13th
+  // CPI ~13th
   for (let addM=0; addM<3; addM++){
-    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth()+addM, 13, 12, 30, 0));
-    cands.push({ name:'US CPI Release', when:new Date(d.getTime()) });
+    cands.push({ name:'US CPI Release',
+      when: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth()+addM, 13, 12, 30, 0)) });
   }
-  // FOMC approx: 3rd Wednesday of March/May/Jun/Sep/Nov/Dec at 18:00 UTC
-  const fomcMonths = [0,2,4,5,8,10,11]; // Jan(mtg), Mar, May, Jun, Sep, Nov, Dec (approx)
+  // FOMC — 3rd Wednesday of certain months, 18:00 UTC (approx)
+  const fomcMonths = [0,2,4,5,8,10,11];
   for (let addM=0; addM<4; addM++){
     const m = (now.getUTCMonth()+addM) % 12;
     if (!fomcMonths.includes(m)) continue;
     const year = now.getUTCFullYear() + Math.floor((now.getUTCMonth()+addM)/12);
     const d = new Date(Date.UTC(year, m, 1, 18, 0, 0));
-    let wedCount = 0;
+    let wed = 0;
     while (true){
-      if (d.getUTCDay() === 3){ wedCount++; if (wedCount===3) break; }
+      if (d.getUTCDay() === 3){ wed++; if (wed===3) break; }
       d.setUTCDate(d.getUTCDate()+1);
     }
     cands.push({ name:'FOMC Rate Decision', when:new Date(d.getTime()) });
   }
-
   const future = cands.filter(e => e.when.getTime() > now.getTime())
                       .sort((a,b) => a.when - b.when);
   return future[0] || null;
@@ -1070,57 +1782,130 @@ function updateNewsCountdown(now){
   const ev = nextHighImpactEvent(now);
   if (!ev){ $('#newsCountdown').textContent = '—'; return; }
   const diff = ev.when.getTime() - now.getTime();
-  const totalSec = Math.max(0, Math.floor(diff/1000));
-  const d = Math.floor(totalSec / 86400);
-  const h = Math.floor((totalSec % 86400) / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = totalSec % 60;
-  const parts = [];
-  if (d>0) parts.push(d + 'h'); // "h" = hari
-  parts.push(String(h).padStart(2,'0'));
-  parts.push(String(m).padStart(2,'0'));
-  parts.push(String(s).padStart(2,'0'));
-  $('#newsCountdown').textContent = (d>0 ? d + 'h ' : '') +
-      String(h).padStart(2,'0') + ':' +
-      String(m).padStart(2,'0') + ':' +
-      String(s).padStart(2,'0');
+  const total = Math.max(0, Math.floor(diff/1000));
+  const d = Math.floor(total / 86400);
+  const h = Math.floor((total % 86400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  $('#newsCountdown').textContent =
+    (d>0 ? d + 'h ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
   $('#newsLabel').textContent = ev.name.length > 22 ? ev.name.slice(0,20)+'…' : ev.name;
 }
 
-/* ========== 3. TRADINGVIEW WIDGET LOADER ========== */
-/**
- * TradingView "external-embedding" widgets are loaded by inserting
- * a <script src="…embed-widget-xxx.js"> into the container. The script
- * reads JSON config from its previous sibling text-node.
+/* ========== 3. SESSIONS BOARD (view tab) ========== */
+function buildSessionBoard(){
+  const grid = $('#sessionGrid');
+  grid.innerHTML = '';
+  SESSIONS.forEach(sess => {
+    const el = document.createElement('div');
+    el.className = 'card session';
+    el.setAttribute('data-testid', 'session-'+sess.key);
+    el.innerHTML = `
+      <div class="s-name"><span class="s-flag">${sess.flag}</span> ${sess.name}</div>
+      <div class="s-times" id="stimes_${sess.key}">—</div>
+      <div class="s-hours">UTC ${String(sess.open).padStart(2,'0')}:00 – ${String(sess.close).padStart(2,'0')}:00</div>
+      <div class="s-status closed" id="sstatus_${sess.key}">CLOSED</div>
+      <div class="s-progress"><span id="sbar_${sess.key}" style="width:0%"></span></div>
+      <div class="s-countdown" id="scount_${sess.key}">—</div>
+    `;
+    grid.appendChild(el);
+  });
+  if (window.lucide) lucide.createIcons();
+}
+
+/** For a UTC hour range [open,close), return start & end Date for the current *cycle*
+ *  (session that contains `now` if open, else next upcoming session).
  */
+function sessionCycle(sess, now){
+  const y = now.getUTCFullYear(), mo = now.getUTCMonth(), d = now.getUTCDate();
+  const {open, close} = sess;
+  // Start candidates: today at 'open', yesterday at 'open' (for wrap)
+  const candidates = [];
+  const addStart = (dayOffset) => {
+    const start = new Date(Date.UTC(y, mo, d+dayOffset, open, 0, 0));
+    let end;
+    if (open < close){
+      end = new Date(Date.UTC(y, mo, d+dayOffset, close, 0, 0));
+    } else {
+      end = new Date(Date.UTC(y, mo, d+dayOffset+1, close, 0, 0));
+    }
+    candidates.push({start, end});
+  };
+  addStart(-1); addStart(0); addStart(1);
+
+  // Find current (start<=now<end) else next (start>=now)
+  const current = candidates.find(c => now >= c.start && now < c.end);
+  if (current) return { ...current, open:true };
+  const upcoming = candidates.filter(c => c.start > now).sort((a,b) => a.start - b.start)[0];
+  return { ...upcoming, open:false };
+}
+
+function updateSessionBoard(now){
+  const tz = state.settings.timezone;
+  const tzLbl = $('#sessionsTzLabel');
+  if (tzLbl) tzLbl.textContent = 'Zona waktu Anda: ' + tzShortLabel(tz);
+  SESSIONS.forEach(sess => {
+    const timesEl = $('#stimes_'+sess.key);
+    const statusEl = $('#sstatus_'+sess.key);
+    const barEl    = $('#sbar_'+sess.key);
+    const cntEl    = $('#scount_'+sess.key);
+    if (!statusEl || !barEl || !cntEl) return; // board not built yet
+
+    const cycle = sessionCycle(sess, now);
+    const startStr = formatTime(cycle.start, tz);
+    const endStr   = formatTime(cycle.end, tz);
+    if (timesEl) timesEl.textContent = startStr + ' → ' + endStr;
+
+    if (cycle.open){
+      const totalMs = cycle.end - cycle.start;
+      const passMs = now - cycle.start;
+      const pct = Math.max(0, Math.min(100, (passMs/totalMs)*100));
+      statusEl.className = 's-status open';
+      statusEl.textContent = 'OPEN';
+      barEl.style.width = pct.toFixed(1) + '%';
+      cntEl.textContent = 'Tutup dalam ' + humanizeDelta(cycle.end - now);
+    } else {
+      statusEl.className = 's-status closed';
+      statusEl.textContent = 'CLOSED';
+      barEl.style.width = '0%';
+      cntEl.textContent = 'Buka dalam ' + humanizeDelta(cycle.start - now);
+    }
+  });
+}
+
+function humanizeDelta(ms){
+  const total = Math.max(0, Math.floor(ms/1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+/* ========== 4. TRADINGVIEW WIDGET LOADER ========== */
 function tvEmbed(containerId, scriptUrl, config){
   const host = document.getElementById(containerId);
   if (!host) return;
-  host.innerHTML = ''; // reset
+  host.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'tradingview-widget-container';
-  wrap.style.height = '100%';
-  wrap.style.width = '100%';
-
+  wrap.style.height = '100%'; wrap.style.width = '100%';
   const inner = document.createElement('div');
   inner.className = 'tradingview-widget-container__widget';
-  inner.style.height = '100%';
-  inner.style.width = '100%';
+  inner.style.height = '100%'; inner.style.width = '100%';
   wrap.appendChild(inner);
-
   const s = document.createElement('script');
-  s.type = 'text/javascript';
-  s.async = true;
+  s.type = 'text/javascript'; s.async = true;
   s.src = scriptUrl;
   s.innerHTML = JSON.stringify(config);
   wrap.appendChild(s);
-
   host.appendChild(wrap);
 }
 
-/* ---- Individual widget builders ---- */
+const TV_BASE = 'https://s3.tradingview.com/external-embedding/';
+
 function loadTicker(){
-  tvEmbed('tvTape', 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js', {
+  tvEmbed('tvTape', TV_BASE + 'embed-widget-ticker-tape.js', {
     symbols: [
       {description:'Gold',    proName:'OANDA:XAUUSD'},
       {description:'Silver',  proName:'OANDA:XAGUSD'},
@@ -1131,77 +1916,48 @@ function loadTicker(){
       {description:'US30',    proName:'OANDA:US30USD'},
       {description:'BTCUSD',  proName:'BINANCE:BTCUSDT'},
     ],
-    isTransparent: false,
-    displayMode: 'adaptive',
-    colorTheme: 'light',
-    locale: 'en'
+    isTransparent: false, displayMode: 'adaptive',
+    colorTheme: 'light', locale: 'en'
   });
 }
 
 function loadAdvancedChart(sym){
-  tvEmbed('tvChart', 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js', {
+  tvEmbed('tvChart', TV_BASE + 'embed-widget-advanced-chart.js', {
     autosize: true,
-    symbol: sym,
-    interval: '60',
-    timezone: 'Asia/Jakarta',
-    theme: 'light',
-    style: '1',
-    locale: 'en',
-    withdateranges: true,
-    hide_side_toolbar: false,
-    allow_symbol_change: true,
-    details: true,
-    hotlist: false,
-    calendar: false,
+    symbol: sym, interval: '60',
+    timezone: state.settings.timezone,
+    theme: 'light', style: '1', locale: 'en',
+    withdateranges: true, hide_side_toolbar: false,
+    allow_symbol_change: true, details: true,
+    hotlist: false, calendar: false,
     studies: ['STD;EMA', 'STD;RSI'],
     support_host: 'https://www.tradingview.com'
   });
 }
-
 function loadTechnical(sym, interval='1h'){
-  tvEmbed('tvTech', 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js', {
-    interval: interval,
-    width: '100%',
-    isTransparent: false,
-    height: '100%',
-    symbol: sym,
-    showIntervalTabs: true,
-    displayMode: 'single',
-    locale: 'en',
-    colorTheme: 'light'
+  tvEmbed('tvTech', TV_BASE + 'embed-widget-technical-analysis.js', {
+    interval, width:'100%', isTransparent:false, height:'100%',
+    symbol: sym, showIntervalTabs:true, displayMode:'single',
+    locale:'en', colorTheme:'light'
   });
   $('#taSymbolPill').textContent = symbolLabel(sym) + ' · ' + interval.toUpperCase();
 }
-
 function loadSymbolInfo(sym){
-  tvEmbed('tvSymInfo', 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js', {
-    symbol: sym,
-    width: '100%',
-    locale: 'en',
-    colorTheme: 'light',
-    isTransparent: false
+  tvEmbed('tvSymInfo', TV_BASE + 'embed-widget-symbol-info.js', {
+    symbol: sym, width:'100%', locale:'en',
+    colorTheme:'light', isTransparent:false
   });
 }
-
 function loadMarketOverview(){
-  tvEmbed('tvMarket', 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js', {
-    colorTheme: 'light',
-    dateRange: '12M',
-    showChart: true,
-    locale: 'en',
-    width: '100%',
-    height: '100%',
-    largeChartUrl: '',
-    isTransparent: false,
-    showSymbolLogo: true,
-    showFloatingTooltip: false,
-    plotLineColorGrowing: '#0E8F55',
-    plotLineColorFalling: '#C0392B',
-    gridLineColor: 'rgba(233,229,218,1)',
-    scaleFontColor: 'rgba(15,17,22,1)',
-    belowLineFillColorGrowing: 'rgba(14, 143, 85, 0.10)',
-    belowLineFillColorFalling: 'rgba(192, 57, 43, 0.10)',
-    symbolActiveColor: 'rgba(232,93,59,0.12)',
+  tvEmbed('tvMarket', TV_BASE + 'embed-widget-market-overview.js', {
+    colorTheme:'light', dateRange:'12M', showChart:true, locale:'en',
+    width:'100%', height:'100%', largeChartUrl:'', isTransparent:false,
+    showSymbolLogo:true, showFloatingTooltip:false,
+    plotLineColorGrowing:'#0E8F55', plotLineColorFalling:'#C0392B',
+    gridLineColor:'rgba(233,229,218,1)', scaleFontColor:'rgba(15,17,22,1)',
+    belowLineFillColorGrowing:'rgba(14, 143, 85, 0.10)',
+    belowLineFillColorFalling:'rgba(192, 57, 43, 0.10)',
+    symbolActiveColor:'rgba(232,93,59,0.12)',
     tabs: [
       { title:'Indices', symbols:[
         {s:'OANDA:NAS100USD', d:'NAS100'},
@@ -1221,60 +1977,124 @@ function loadMarketOverview(){
     ]
   });
 }
-
 function loadHeatmap(){
-  tvEmbed('tvHeatmap', 'https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js', {
+  tvEmbed('tvHeatmap', TV_BASE + 'embed-widget-forex-heat-map.js', {
     width:'100%', height:'100%',
     currencies:['EUR','USD','JPY','GBP','CHF','AUD','CAD','NZD'],
-    isTransparent:false,
-    colorTheme:'light',
-    locale:'en'
+    isTransparent:false, colorTheme:'light', locale:'en'
   });
 }
-
-function loadCalendar(){
-  tvEmbed('tvCal', 'https://s3.tradingview.com/external-embedding/embed-widget-events.js', {
-    colorTheme:'light',
-    isTransparent:false,
-    width:'100%', height:'100%',
-    locale:'en',
-    importanceFilter: '0,1',   // medium + high
-    countryFilter: 'ar,au,br,ca,cn,de,eu,fr,gb,hk,in,it,jp,mx,nz,ru,sg,us'
+function loadTVCalendar(hostId){
+  tvEmbed(hostId, TV_BASE + 'embed-widget-events.js', {
+    colorTheme:'light', isTransparent:false,
+    width:'100%', height:'100%', locale:'en',
+    importanceFilter:'0,1',
+    countryFilter:'ar,au,br,ca,cn,de,eu,fr,gb,hk,in,it,jp,mx,nz,ru,sg,us'
   });
 }
-
-function loadMiniSnapshots(){
-  const set = [
-    {id:'mini1', sym:'OANDA:XAUUSD'},
-    {id:'mini2', sym:'OANDA:EURUSD'},
-    {id:'mini3', sym:'OANDA:NAS100USD'},
-    {id:'mini4', sym:'BINANCE:BTCUSDT'}
-  ];
-  set.forEach(o => {
-    tvEmbed(o.id, 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js', {
-      symbol: o.sym,
-      width: '100%',
-      height: '100%',
-      locale: 'en',
-      dateRange: '1D',
-      colorTheme: 'light',
-      trendLineColor: '#E85D3B',
-      underLineColor: 'rgba(232,93,59,0.15)',
-      isTransparent: false,
-      autosize: true,
-      largeChartUrl: ''
+function loadMiniSnapshots(hostIds, syms){
+  hostIds.forEach((id, i) => {
+    tvEmbed(id, TV_BASE + 'embed-widget-mini-symbol-overview.js', {
+      symbol: syms[i], width:'100%', height:'100%', locale:'en',
+      dateRange:'1D', colorTheme:'light',
+      trendLineColor:'#E85D3B', underLineColor:'rgba(232,93,59,0.15)',
+      isTransparent:false, autosize:true, largeChartUrl:''
     });
   });
 }
+function loadCrossRates(){
+  tvEmbed('tvCross', TV_BASE + 'embed-widget-forex-cross-rates.js', {
+    width:'100%', height:'100%',
+    currencies:['EUR','USD','JPY','GBP','CHF','AUD','CAD','NZD'],
+    isTransparent:false, colorTheme:'light', locale:'en'
+  });
+}
+function loadConverter(){
+  tvEmbed('tvConverter', TV_BASE + 'embed-widget-currency-converter.js', {
+    width:'100%', height:'100%',
+    colorTheme:'light', isTransparent:false, locale:'en'
+  });
+}
+function loadScreener(kind){
+  tvEmbed('tvScreener', TV_BASE + 'embed-widget-screener.js', {
+    width:'100%', height:'100%',
+    defaultColumn:'overview',
+    defaultScreen: kind === 'forex' ? 'general' :
+                   kind === 'crypto' ? 'general' :
+                   kind === 'cfd'    ? 'general' : 'most_capitalized',
+    market: kind,          // 'forex' | 'crypto' | 'stock' | 'cfd'
+    showToolbar:true,
+    colorTheme:'light', locale:'en', isTransparent:false
+  });
+}
 
-/* ========== 4. TREND ANALYZER (per-timeframe) ========== */
+/* ========== 5. MULTI-SOURCE CALENDAR ========== */
+function investingCalendarUrl(){
+  // Countries: US, EU, GB, DE, JP, CA, AU, NZ, CH, CN, HK, ID, SG, IN, FR, IT
+  // importance: 3 = high (bullseye). We'll show medium+high with 2,3.
+  // timeZone id 27 = UTC. We can't easily match arbitrary tz; leave 27 (UTC).
+  const params = new URLSearchParams({
+    columns: 'exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous',
+    features: 'datepicker,timezone,filters',
+    countries: '25,32,6,37,72,22,17,39,14,10,35,43,56,36,110,11,26,12,4,5,17,113',
+    importance: '2,3',
+    calType: 'week',
+    timeZone: '27',
+    lang: '1'
+  });
+  return 'https://sslecal2.investing.com/?' + params.toString();
+}
+function mql5CalendarUrl(){
+  // MQL5 embed uses a straightforward iframe endpoint.
+  return 'https://www.mql5.com/en/economic-calendar/widget?mode=2&utm_source=tcc';
+}
+
+function setCalendarSource(src){
+  state.calSource = src;
+  $$('#calSourceTabs .mini-tab').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-src') === src);
+  });
+
+  $('#calSlotTV').classList.add('hidden');
+  $('#calSlotInv').classList.add('hidden');
+  $('#calSlotMql5').classList.add('hidden');
+
+  const srcName = $('#calSrcName');
+  const srcInfo = $('#calSrcInfo');
+  const openExt = $('#calOpenExt');
+  const notice  = $('#calNotice');
+
+  if (src === 'tv'){
+    $('#calSlotTV').classList.remove('hidden');
+    loadTVCalendar('calSlotTV');
+    srcName.textContent = 'TradingView';
+    srcInfo.textContent = 'Filter default: importance medium + high';
+    openExt.href = 'https://www.tradingview.com/economic-calendar/';
+    notice.classList.add('hidden');
+  } else if (src === 'investing'){
+    const iframe = $('#calSlotInv');
+    if (!iframe.src) iframe.src = investingCalendarUrl();
+    iframe.classList.remove('hidden');
+    srcName.textContent = 'Investing.com';
+    srcInfo.textContent = 'Zona UTC · impact medium+high';
+    openExt.href = 'https://www.investing.com/economic-calendar/';
+    notice.classList.remove('hidden');
+  } else if (src === 'mql5'){
+    const iframe = $('#calSlotMql5');
+    if (!iframe.src) iframe.src = mql5CalendarUrl();
+    iframe.classList.remove('hidden');
+    srcName.textContent = 'MQL5';
+    srcInfo.textContent = 'Sumber MetaQuotes · MetaTrader';
+    openExt.href = 'https://www.mql5.com/en/economic-calendar';
+    notice.classList.remove('hidden');
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+/* ========== 6. TREND ANALYZER ========== */
 const TIMEFRAMES = [
-  {key:'1m',  label:'M1'},
-  {key:'5m',  label:'M5'},
-  {key:'15m', label:'M15'},
-  {key:'1h',  label:'H1'},
-  {key:'4h',  label:'H4'},
-  {key:'1D',  label:'D1'},
+  {key:'1m', label:'M1'}, {key:'5m', label:'M5'}, {key:'15m', label:'M15'},
+  {key:'1h', label:'H1'}, {key:'4h', label:'H4'}, {key:'1D', label:'D1'},
 ];
 
 function buildTrendGrid(){
@@ -1286,15 +2106,10 @@ function buildTrendGrid(){
     card.setAttribute('data-testid', 'trend-card-' + tf.label);
     card.innerHTML = `
       <div class="card-hd">
-        <div class="card-title">
-          <i data-lucide="signal"></i>
-          Sinyal ${tf.label}
-        </div>
+        <div class="card-title"><i data-lucide="signal"></i> Sinyal ${tf.label}</div>
         <span class="tf-badge">${tf.label} · ${tf.key}</span>
       </div>
-      <div class="card-bd">
-        <div id="trend_${tf.label}" class="tv-host h-trend"></div>
-      </div>
+      <div class="card-bd"><div id="trend_${tf.label}" class="tv-host h-trend"></div></div>
     `;
     grid.appendChild(card);
   });
@@ -1304,52 +2119,35 @@ function buildTrendGrid(){
 
 function refreshTrendGrid(){
   TIMEFRAMES.forEach(tf => {
-    tvEmbed('trend_'+tf.label, 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js', {
-      interval: tf.key,
-      width: '100%',
-      isTransparent: false,
-      height: '100%',
-      symbol: state.trendSymbol,
-      showIntervalTabs: false,
-      displayMode: 'single',
-      locale: 'en',
-      colorTheme: 'light'
+    tvEmbed('trend_'+tf.label, TV_BASE + 'embed-widget-technical-analysis.js', {
+      interval: tf.key, width:'100%', isTransparent:false, height:'100%',
+      symbol: state.trendSymbol, showIntervalTabs:false,
+      displayMode:'single', locale:'en', colorTheme:'light'
     });
   });
 }
 
-/* ========== 5. WATCHLIST (LocalStorage) ========== */
-const LS_KEY = 'tcc.watchlist.v1';
+/* ========== 7. WATCHLIST ========== */
+function loadWatchlist(){ state.watchlist = loadJSON(LS.WL, []); }
+function saveWatchlist(){ saveJSON(LS.WL, state.watchlist); }
 
-function loadWatchlist(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    state.watchlist = raw ? JSON.parse(raw) : [];
-  }catch(e){ state.watchlist = []; }
-}
-function saveWatchlist(){
-  localStorage.setItem(LS_KEY, JSON.stringify(state.watchlist));
-}
 function normalizeSymbol(input){
   if (!input) return null;
   let s = input.trim().toUpperCase();
   if (!s) return null;
-  // If user didn't include exchange, try to guess
   if (!s.includes(':')){
     if (/^(XAU|XAG|EUR|GBP|USD|AUD|NZD|CAD|CHF|JPY|NAS|US30|SPX)/.test(s)) s = 'OANDA:' + s;
     else if (/^(BTC|ETH|SOL|BNB|XRP|DOGE|ADA)/.test(s)) s = 'BINANCE:' + s + (s.endsWith('USDT')?'':'USDT');
-    else s = 'NASDAQ:' + s; // fallback
+    else s = 'NASDAQ:' + s;
   }
   return s;
 }
 
 function renderWatchlist(){
-  const grid = $('#wlGrid');
-  const empty = $('#wlEmpty');
+  const grid = $('#wlGrid'), empty = $('#wlEmpty');
   grid.innerHTML = '';
   if (state.watchlist.length === 0){
-    empty.classList.remove('hidden');
-    return;
+    empty.classList.remove('hidden'); return;
   }
   empty.classList.add('hidden');
 
@@ -1373,136 +2171,96 @@ function renderWatchlist(){
     grid.appendChild(item);
   });
 
-  // Attach remove handlers
   $$('.wl-remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', () => {
       const i = parseInt(btn.getAttribute('data-idx'), 10);
       state.watchlist.splice(i, 1);
-      saveWatchlist();
-      renderWatchlist();
+      saveWatchlist(); renderWatchlist();
     });
   });
 
-  // Load mini widgets
   state.watchlist.forEach((sym, idx) => {
-    tvEmbed('wl_'+idx, 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js', {
-      symbol: sym,
-      width: '100%',
-      colorTheme: 'light',
-      isTransparent: false,
-      locale: 'en'
+    tvEmbed('wl_'+idx, TV_BASE + 'embed-widget-single-quote.js', {
+      symbol: sym, width:'100%', colorTheme:'light',
+      isTransparent:false, locale:'en'
     });
-    tvEmbed('wlmini_'+idx, 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js', {
-      symbol: sym,
-      width: '100%',
-      height: '100%',
-      locale: 'en',
-      dateRange: '1D',
-      colorTheme: 'light',
-      trendLineColor: '#E85D3B',
-      underLineColor: 'rgba(232,93,59,0.15)',
-      isTransparent: false,
-      autosize: true
+    tvEmbed('wlmini_'+idx, TV_BASE + 'embed-widget-mini-symbol-overview.js', {
+      symbol: sym, width:'100%', height:'100%', locale:'en',
+      dateRange:'1D', colorTheme:'light',
+      trendLineColor:'#E85D3B', underLineColor:'rgba(232,93,59,0.15)',
+      isTransparent:false, autosize:true
     });
   });
 
   if (window.lucide) lucide.createIcons();
 }
 
-/* ========== 6. CALCULATORS ========== */
-/* Attach live-recalc listeners to each form */
+/* ========== 8. CALCULATORS ========== */
 function bindCalcForm(formId, calcFn){
   const form = document.getElementById(formId);
   if (!form) return;
-  const inputs = form.querySelectorAll('input, select');
-  inputs.forEach(el => {
+  form.querySelectorAll('input, select').forEach(el => {
     el.addEventListener('input', calcFn);
     el.addEventListener('change', calcFn);
   });
-  calcFn(); // initial
+  calcFn();
 }
 
-/* --- Pip Calculator ---
- * fx-usd:  pip = 0.0001, pip_value = 0.0001 * (lot*100000) = $10 per pip / standard lot
- * fx-jpy:  pip = 0.01,   pip_value = (0.01 * 100000) / price  (USD account)
- * fx-cross: pip_value  = (0.0001 * 100000) / price * quoteUSD  (approx)
- * gold:    pip = 0.01,   contract 100 oz → pip_value = 0.01 * 100 * lot = $1 * lot
- * silver:  pip = 0.001,  contract 5000 oz → pip_value = 0.001 * 5000 * lot = $5 * lot
- * index:   pip = 1 point, contract $1/pt → pip_value = 1 * lot
- */
 function calcPip(){
   const f = $('#formPip');
   const instr = f.instr.value;
   const lot = parseFloat(f.lot.value) || 0;
   const price = parseFloat(f.price.value) || 1;
   const q2u = parseFloat(f.quoteUSD.value) || 1;
-
   let pipVal = 0;
   if (instr === 'fx-usd') pipVal = 10 * lot;
   else if (instr === 'fx-jpy') pipVal = (0.01 * 100000 / (price || 1)) * lot;
   else if (instr === 'fx-cross') pipVal = (0.0001 * 100000 / (price || 1)) * q2u * lot;
-  else if (instr === 'gold') pipVal = 1 * lot;      // per 0.01 move × 100 oz
+  else if (instr === 'gold') pipVal = 1 * lot;
   else if (instr === 'silver') pipVal = 5 * lot;
   else if (instr === 'index') pipVal = 1 * lot;
-
   $('#pipValue').textContent   = fmtUSD(pipVal, 2);
   $('#pipValue10').textContent = fmtUSD(pipVal * 10, 2);
 }
 
-/* --- Lot Size Calculator ---
- * Lot = riskAmount / (SL_pips × pip_value_per_lot)
- */
 function calcLot(){
   const f = $('#formLot');
   const balance = parseFloat(f.balance.value) || 0;
   const riskPct = parseFloat(f.risk.value) || 0;
   const sl = parseFloat(f.sl.value) || 0;
   const pipVal = parseFloat(f.pipVal.value) || 0;
-
   const riskAmt = balance * riskPct / 100;
   const denom = sl * pipVal;
   const lot = denom > 0 ? riskAmt / denom : 0;
-
   $('#lotSize').textContent    = fmt(lot, 3) + ' lot';
   $('#lotRiskAmt').textContent = fmtUSD(riskAmt, 2);
 }
 
-/* --- Risk Calculator --- */
 function calcRisk(){
   const f = $('#formRisk');
   const bal = parseFloat(f.balance.value) || 0;
   const pct = parseFloat(f.pct.value) || 0;
   const trades = parseFloat(f.trades.value) || 0;
-
   const perTrade = bal * pct / 100;
-  const daily = perTrade * trades;
-
   $('#riskPerTrade').textContent = fmtUSD(perTrade, 2);
-  $('#riskDaily').textContent    = fmtUSD(daily, 2);
+  $('#riskDaily').textContent    = fmtUSD(perTrade * trades, 2);
 }
 
-/* --- Risk Reward Calculator --- */
 function calcRR(){
   const f = $('#formRR');
   const e = parseFloat(f.entry.value);
   const sl = parseFloat(f.sl.value);
   const tp = parseFloat(f.tp.value);
   const dir = f.dir.value;
-
   let risk = 0, reward = 0;
-  if (dir === 'long'){
-    risk = e - sl; reward = tp - e;
-  } else {
-    risk = sl - e; reward = e - tp;
-  }
+  if (dir === 'long'){ risk = e - sl; reward = tp - e; }
+  else { risk = sl - e; reward = e - tp; }
   const ratio = (risk > 0 && reward > 0) ? (reward / risk) : NaN;
-
   $('#rrRatio').textContent  = isNaN(ratio) ? '—' : ('1 : ' + fmt(ratio, 2));
   $('#rrRisk').textContent   = fmt(Math.abs(risk), 5);
   $('#rrReward').textContent = fmt(Math.abs(reward), 5);
 }
 
-/* --- Profit Calculator --- */
 function calcProfit(){
   const f = $('#formProfit');
   const dir = f.dir.value;
@@ -1511,11 +2269,9 @@ function calcProfit(){
   const c = parseFloat(f.close.value) || 0;
   const pipSize = parseFloat(f.pipSize.value) || 0;
   const pipVal = parseFloat(f.pipVal.value) || 0;
-
   const rawMove = dir === 'long' ? (c - o) : (o - c);
   const pips = pipSize > 0 ? (rawMove / pipSize) : 0;
   const amount = pips * pipVal * lot;
-
   $('#profPips').textContent = fmt(pips, 2);
   const el = $('#profAmt');
   el.textContent = fmtUSD(amount, 2);
@@ -1524,55 +2280,352 @@ function calcProfit(){
   else if (amount < 0) el.classList.add('bear');
 }
 
-/* --- Margin Calculator ---
- * Margin = (lot × contract_size × price) / leverage
- */
 function calcMargin(){
   const f = $('#formMargin');
   const lot = parseFloat(f.lot.value) || 0;
   const contract = parseFloat(f.contract.value) || 0;
   const price = parseFloat(f.price.value) || 0;
   const lev = parseFloat(f.lev.value) || 1;
-
   const notional = lot * contract * price;
   const margin = lev > 0 ? notional / lev : 0;
-
   $('#marginReq').textContent      = fmtUSD(margin, 2);
   $('#marginNotional').textContent = fmtUSD(notional, 2);
 }
 
-/* --- Drawdown Calculator --- */
 function calcDD(){
   const f = $('#formDD');
   const peak = parseFloat(f.peak.value) || 0;
   const curr = parseFloat(f.curr.value) || 0;
-
   const ddAmt = Math.max(0, peak - curr);
   const ddPct = peak > 0 ? (ddAmt / peak) * 100 : 0;
-  // recovery: to go back from curr to peak → need +(peak/curr - 1) × 100
   const recovery = curr > 0 ? ((peak / curr) - 1) * 100 : 0;
-
   $('#ddAmt').textContent      = fmtUSD(ddAmt, 2);
   $('#ddPct').textContent      = fmt(ddPct, 2) + ' %';
   $('#ddRecovery').textContent = fmt(recovery, 2) + ' %';
 }
 
-/* ========== 7. TABS ========== */
+/* Pivot Points — Classic, Fibonacci, Camarilla */
+function calcPivot(){
+  const f = $('#formPivot');
+  const h = parseFloat(f.high.value) || 0;
+  const l = parseFloat(f.low.value)  || 0;
+  const c = parseFloat(f.close.value) || 0;
+  const method = f.method.value;
+  const range = h - l;
+  let pp=0, r1=0, r2=0, r3=0, s1=0, s2=0, s3=0;
+
+  if (method === 'classic'){
+    pp = (h + l + c) / 3;
+    r1 = 2*pp - l; s1 = 2*pp - h;
+    r2 = pp + (h - l); s2 = pp - (h - l);
+    r3 = h + 2*(pp - l); s3 = l - 2*(h - pp);
+  } else if (method === 'fibonacci'){
+    pp = (h + l + c) / 3;
+    r1 = pp + 0.382 * range; s1 = pp - 0.382 * range;
+    r2 = pp + 0.618 * range; s2 = pp - 0.618 * range;
+    r3 = pp + 1.000 * range; s3 = pp - 1.000 * range;
+  } else if (method === 'camarilla'){
+    pp = (h + l + c) / 3;
+    r1 = c + range * 1.1/12; s1 = c - range * 1.1/12;
+    r2 = c + range * 1.1/6;  s2 = c - range * 1.1/6;
+    r3 = c + range * 1.1/4;  s3 = c - range * 1.1/4;
+  }
+
+  const digits = h < 10 ? 5 : (h < 1000 ? 4 : 2);
+  $('#pvPP').textContent = fmt(pp, digits);
+  $('#pvR1').textContent = fmt(r1, digits); $('#pvS1').textContent = fmt(s1, digits);
+  $('#pvR2').textContent = fmt(r2, digits); $('#pvS2').textContent = fmt(s2, digits);
+  $('#pvR3').textContent = fmt(r3, digits); $('#pvS3').textContent = fmt(s3, digits);
+}
+
+/* Fibonacci Retracement + Extension levels */
+const FIBO_LEVELS = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1, 1.272, 1.618, 2, 2.618];
+
+function calcFibo(){
+  const f = $('#formFibo');
+  const start = parseFloat(f.start.value) || 0;
+  const end = parseFloat(f.end.value) || 0;
+  const dir = f.dir.value;
+
+  const range = end - start;
+  const digits = Math.abs(end) < 10 ? 5 : (Math.abs(end) < 1000 ? 4 : 2);
+  const tbody = $('#fiboTBody');
+  tbody.innerHTML = '';
+
+  // Build rows two-columns wide
+  const rows = FIBO_LEVELS.map(lvl => {
+    let price;
+    if (dir === 'up'){
+      // uptrend: retracement pulls back from end toward start
+      price = end - range * lvl;
+    } else {
+      // downtrend: retracement bounces from end (low) toward start
+      price = end + Math.abs(range) * lvl * (start > end ? 1 : -1);
+      // simpler: treat as absolute range
+      price = end - (end - start) * lvl;
+    }
+    return { lvl, price };
+  });
+
+  // Group into pairs so each <tr> shows Level+Price twice
+  for (let i=0; i<rows.length; i+=2){
+    const a = rows[i], b = rows[i+1];
+    const tr = document.createElement('tr');
+    const lbl = (l) => (l*100).toFixed(1).replace(/\.0$/,'') + '%';
+    tr.innerHTML = `
+      <td>${lbl(a.lvl)}</td><td class="${a.lvl <= 1 ? 'sup' : 'res'}">${fmt(a.price, digits)}</td>
+      ${b ? `<td>${lbl(b.lvl)}</td><td class="${b.lvl <= 1 ? 'sup' : 'res'}">${fmt(b.price, digits)}</td>` : '<td></td><td></td>'}
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function calcCompound(){
+  const f = $('#formCompound');
+  const init = parseFloat(f.init.value) || 0;
+  const rate = parseFloat(f.rate.value) || 0;
+  const n = parseInt(f.n.value) || 0;
+  const final = init * Math.pow(1 + rate/100, n);
+  const profit = final - init;
+  const totalRet = init > 0 ? ((final/init) - 1) * 100 : 0;
+  $('#cmpFinal').textContent  = fmtUSD(final, 2);
+  $('#cmpProfit').textContent = fmtUSD(profit, 2);
+  $('#cmpReturn').textContent = fmt(totalRet, 2) + ' %';
+}
+
+/* ========== 9. JOURNAL ========== */
+function loadJournal(){ state.journal = loadJSON(LS.JR, []); }
+function saveJournal(){ saveJSON(LS.JR, state.journal); }
+
+function renderJournal(){
+  const empty = $('#jrEmpty');
+  const wrap = $('#jrTableWrap');
+  const tbody = $('#jrTBody');
+  tbody.innerHTML = '';
+
+  if (state.journal.length === 0){
+    empty.classList.remove('hidden');
+    wrap.classList.add('hidden');
+    renderJournalStats();
+    return;
+  }
+  empty.classList.add('hidden');
+  wrap.classList.remove('hidden');
+
+  const rows = [...state.journal].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  rows.forEach(t => {
+    const pnl = parseFloat(t.pnl);
+    const pnlClass = isNaN(pnl) ? '' : (pnl > 0 ? 'bull' : pnl < 0 ? 'bear' : '');
+    const outcomeBadge = {
+      win: '<span class="pill bull">Win</span>',
+      loss:'<span class="pill bear">Loss</span>',
+      be:  '<span class="pill">BE</span>',
+      open:'<span class="pill accent">Open</span>'
+    }[t.outcome || 'open'] || '';
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-testid', 'jr-row-' + t.id);
+    tr.innerHTML = `
+      <td class="mono">${t.date || ''}</td>
+      <td class="mono">${t.symbol || ''}</td>
+      <td>${t.dir === 'short' ? '<span class="bear">SHORT</span>' : '<span class="bull">LONG</span>'}</td>
+      <td class="num">${t.entry ? fmt(parseFloat(t.entry), 5) : '—'}</td>
+      <td class="num">${t.sl ? fmt(parseFloat(t.sl), 5) : '—'}</td>
+      <td class="num">${t.tp ? fmt(parseFloat(t.tp), 5) : '—'}</td>
+      <td class="num">${t.lot || '—'}</td>
+      <td class="num ${pnlClass}">${isNaN(pnl) ? '—' : fmtSigned(pnl)}</td>
+      <td>${outcomeBadge}</td>
+      <td>${t.strategy || '—'}</td>
+      <td><button class="btn-danger" data-id="${t.id}" title="Hapus" data-testid="jr-del-${t.id}"><i data-lucide="trash-2"></i></button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  $$('.btn-danger[data-id]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      state.journal = state.journal.filter(t => t.id !== id);
+      saveJournal(); renderJournal();
+    });
+  });
+
+  if (window.lucide) lucide.createIcons();
+  renderJournalStats();
+}
+
+function renderJournalStats(){
+  const trades = state.journal;
+  const total = trades.length;
+  const closed = trades.filter(t => t.outcome && t.outcome !== 'open');
+  const wins = trades.filter(t => t.outcome === 'win').length;
+  const losses = trades.filter(t => t.outcome === 'loss').length;
+  const winRate = (wins + losses) > 0 ? (wins / (wins + losses)) * 100 : NaN;
+  const pnl = trades.reduce((sum, t) => {
+    const v = parseFloat(t.pnl);
+    return sum + (isNaN(v) ? 0 : v);
+  }, 0);
+
+  // Average RR (only where sl,tp,entry present)
+  const rrs = trades.map(t => {
+    const e = parseFloat(t.entry), s = parseFloat(t.sl), tp = parseFloat(t.tp);
+    if (isNaN(e) || isNaN(s) || isNaN(tp)) return null;
+    const risk = Math.abs(e - s);
+    const reward = Math.abs(tp - e);
+    return (risk > 0 && reward > 0) ? reward / risk : null;
+  }).filter(x => x !== null);
+  const avgRR = rrs.length ? rrs.reduce((a,b)=>a+b,0) / rrs.length : NaN;
+
+  $('#jrTotal').textContent = String(total);
+  $('#jrWins').textContent = String(wins);
+  $('#jrLoss').textContent = String(losses);
+  $('#jrWinRate').textContent = isNaN(winRate) ? '—' : fmt(winRate, 1) + ' %';
+  const plEl = $('#jrPL');
+  plEl.textContent = fmtSigned(pnl) + ' USD';
+  plEl.classList.remove('bull','bear');
+  if (pnl > 0) plEl.classList.add('bull');
+  else if (pnl < 0) plEl.classList.add('bear');
+  $('#jrAvgRR').textContent = isNaN(avgRR) ? '—' : '1 : ' + fmt(avgRR, 2);
+}
+
+function jrAddFromForm(){
+  const form = $('#jrForm');
+  const data = new FormData(form);
+  const obj = Object.fromEntries(data.entries());
+  if (!obj.symbol || !obj.entry || !obj.date){
+    alert('Isi minimal Tanggal, Simbol, dan Entry.');
+    return;
+  }
+  obj.id = 't' + Date.now() + Math.random().toString(36).slice(2,6);
+  state.journal.push(obj);
+  saveJournal(); renderJournal();
+  // Reset numeric fields but keep symbol & date for convenience
+  form.querySelectorAll('input[type=number], textarea').forEach(el => el.value = '');
+  form.pnl.value = '';
+}
+
+function jrExport(){
+  const blob = new Blob([JSON.stringify(state.journal, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url; a.download = 'tcc-journal-' + stamp + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ========== 10. TABS ========== */
 function initTabs(){
   $$('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const name = tab.getAttribute('data-tab');
       $$('.tab').forEach(t => t.classList.toggle('active', t === tab));
-      $$('.view').forEach(v => {
-        v.classList.toggle('active', v.id === 'view-' + name);
-      });
+      $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+
+      // Lazy-load per-tab widgets
+      if (name === 'trend' && !window._trendLoaded){
+        buildTrendGrid(); window._trendLoaded = true;
+      }
+      if (name === 'sessions' && !window._sessionsLoaded){
+        buildSessionBoard();
+        loadMiniSnapshots(['sMini1','sMini2','sMini3','sMini4'],
+          ['OANDA:EURUSD','OANDA:GBPUSD','OANDA:XAUUSD','BINANCE:BTCUSDT']);
+        window._sessionsLoaded = true;
+        updateSessionBoard(new Date());
+      }
+      if (name === 'crossrates' && !window._crossLoaded){
+        loadCrossRates(); loadConverter(); loadScreener(state.screener);
+        window._crossLoaded = true;
+      }
+      if (name === 'calendar' && !window._calLoaded){
+        setCalendarSource(state.settings.calDefault || 'tv');
+        window._calLoaded = true;
+      }
     });
   });
 }
 
-/* ========== 8. INIT ========== */
+/* ========== 11. SETTINGS MODAL ========== */
+function openSettings(){
+  const m = $('#settingsModal');
+  // populate from state
+  $('#setTimezone').value = state.settings.timezone;
+  $$('#timeFormatSeg button').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-fmt') === state.settings.timeFormat);
+  });
+  const track = $('#showSecondsSwitch .switch-track');
+  track.classList.toggle('on', !!state.settings.showSeconds);
+  $('#showSecondsLabel').textContent = state.settings.showSeconds ? 'Aktif' : 'Nonaktif';
+  $$('#calDefaultSeg button').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-src') === state.settings.calDefault);
+  });
+  m.classList.add('open');
+}
+function closeSettings(){ $('#settingsModal').classList.remove('open'); }
+
+function initSettingsModal(){
+  $('#btnSettings').addEventListener('click', openSettings);
+  $('#settingsCloseBtn').addEventListener('click', closeSettings);
+  $('#settingsModal').addEventListener('click', (e) => {
+    if (e.target.id === 'settingsModal') closeSettings();
+  });
+
+  // Time format segmented
+  $$('#timeFormatSeg button').forEach(b => {
+    b.addEventListener('click', () => {
+      $$('#timeFormatSeg button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+  // Cal default segmented
+  $$('#calDefaultSeg button').forEach(b => {
+    b.addEventListener('click', () => {
+      $$('#calDefaultSeg button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+  // Seconds toggle
+  $('#showSecondsSwitch').addEventListener('click', () => {
+    const track = $('#showSecondsSwitch .switch-track');
+    track.classList.toggle('on');
+    $('#showSecondsLabel').textContent = track.classList.contains('on') ? 'Aktif' : 'Nonaktif';
+  });
+
+  // Reset
+  $('#settingsResetBtn').addEventListener('click', () => {
+    state.settings = { ...DEFAULT_SETTINGS };
+    saveSettings();
+    openSettings();
+    applySettings();
+  });
+
+  // Save
+  $('#settingsSaveBtn').addEventListener('click', () => {
+    state.settings.timezone   = $('#setTimezone').value || 'Asia/Jakarta';
+    state.settings.timeFormat = $$('#timeFormatSeg button.active')[0]?.getAttribute('data-fmt') || '24h';
+    state.settings.showSeconds = $('#showSecondsSwitch .switch-track').classList.contains('on');
+    state.settings.calDefault  = $$('#calDefaultSeg button.active')[0]?.getAttribute('data-src') || 'tv';
+    saveSettings();
+    applySettings();
+    closeSettings();
+  });
+}
+
+/** Apply settings to running app (does not restart widgets except chart tz). */
+function applySettings(){
+  updateClock();
+  // Re-load Advanced Chart to apply new timezone
+  loadAdvancedChart(state.symbol);
+  // Update trend/sessions labels
+  if (window._sessionsLoaded){
+    updateSessionBoard(new Date());
+  }
+}
+
+/* ========== 12. INIT ========== */
 function init(){
-  // Icons
+  loadSettings();
+  loadWatchlist();
+  loadJournal();
+
   if (window.lucide) lucide.createIcons();
 
   // Clock
@@ -1581,11 +2634,18 @@ function init(){
 
   // Tabs
   initTabs();
+  initSettingsModal();
 
-  // Header refresh button
+  // Header refresh
   $('#btnRefresh').addEventListener('click', () => {
     loadAllDashboardWidgets();
-    refreshTrendGrid();
+    if (window._trendLoaded) refreshTrendGrid();
+    if (window._crossLoaded){ loadCrossRates(); loadConverter(); loadScreener(state.screener); }
+    if (window._calLoaded)  setCalendarSource(state.calSource);
+    if (window._sessionsLoaded){
+      loadMiniSnapshots(['sMini1','sMini2','sMini3','sMini4'],
+        ['OANDA:EURUSD','OANDA:GBPUSD','OANDA:XAUUSD','BINANCE:BTCUSDT']);
+    }
     renderWatchlist();
   });
 
@@ -1599,25 +2659,22 @@ function init(){
     loadSymbolInfo(state.symbol);
   });
 
-  // Trend symbol select
+  // Trend symbol
   const trSel = $('#trendSymbol');
   trSel.value = state.trendSymbol;
   trSel.addEventListener('change', () => {
     state.trendSymbol = trSel.value;
-    refreshTrendGrid();
+    if (window._trendLoaded) refreshTrendGrid();
   });
 
   // Watchlist controls
-  loadWatchlist();
   renderWatchlist();
   $('#wlAddBtn').addEventListener('click', () => {
     const inp = $('#wlInput');
     const norm = normalizeSymbol(inp.value);
     if (!norm) return;
     if (!state.watchlist.includes(norm)) state.watchlist.push(norm);
-    saveWatchlist();
-    inp.value = '';
-    renderWatchlist();
+    saveWatchlist(); inp.value = ''; renderWatchlist();
   });
   $('#wlInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter'){ e.preventDefault(); $('#wlAddBtn').click(); }
@@ -1625,10 +2682,23 @@ function init(){
   $('#wlClearBtn').addEventListener('click', () => {
     if (state.watchlist.length === 0) return;
     if (confirm('Bersihkan seluruh watchlist?')){
-      state.watchlist = [];
-      saveWatchlist();
-      renderWatchlist();
+      state.watchlist = []; saveWatchlist(); renderWatchlist();
     }
+  });
+
+  // Calendar tabs
+  $$('#calSourceTabs .mini-tab').forEach(b => {
+    b.addEventListener('click', () => setCalendarSource(b.getAttribute('data-src')));
+  });
+
+  // Screener tabs
+  $$('#screenerTabs .mini-tab').forEach(b => {
+    b.addEventListener('click', () => {
+      state.screener = b.getAttribute('data-screen');
+      $$('#screenerTabs .mini-tab').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      loadScreener(state.screener);
+    });
   });
 
   // Calculators
@@ -1639,10 +2709,24 @@ function init(){
   bindCalcForm('formProfit', calcProfit);
   bindCalcForm('formMargin', calcMargin);
   bindCalcForm('formDD', calcDD);
+  bindCalcForm('formPivot', calcPivot);
+  bindCalcForm('formFibo', calcFibo);
+  bindCalcForm('formCompound', calcCompound);
 
-  // Widgets
+  // Journal
+  $('#jrForm').date.value = new Date().toISOString().slice(0,10);
+  $('#jrAddBtn').addEventListener('click', jrAddFromForm);
+  $('#jrExportBtn').addEventListener('click', jrExport);
+  $('#jrClearBtn').addEventListener('click', () => {
+    if (state.journal.length === 0) return;
+    if (confirm('Hapus semua trade di journal?')){
+      state.journal = []; saveJournal(); renderJournal();
+    }
+  });
+  renderJournal();
+
+  // Dashboard widgets
   loadAllDashboardWidgets();
-  buildTrendGrid();
 }
 
 function loadAllDashboardWidgets(){
@@ -1651,9 +2735,10 @@ function loadAllDashboardWidgets(){
   loadTechnical(state.symbol, '1h');
   loadSymbolInfo(state.symbol);
   loadMarketOverview();
-  loadMiniSnapshots();
+  loadMiniSnapshots(['mini1','mini2','mini3','mini4'],
+    ['OANDA:XAUUSD','OANDA:EURUSD','OANDA:NAS100USD','BINANCE:BTCUSDT']);
   loadHeatmap();
-  loadCalendar();
+  loadTVCalendar('tvCal');
 }
 
 document.addEventListener('DOMContentLoaded', init);
