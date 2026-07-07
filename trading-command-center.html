@@ -618,6 +618,94 @@ input, select, textarea{ font-family: inherit; color: var(--ink); }
 .switch-track.on{ background: var(--accent); border-color: var(--accent); }
 .switch-track.on .switch-thumb{ transform: translateX(18px); }
 
+/* ---------- AI Trading Intelligence cards ---------- */
+.ai-grid{
+  display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+  grid-column: 1 / -1;
+}
+.ai-card .card-hd .card-title i{ color: #6E5AF7; }  /* violet accent for AI */
+.ai-pill{
+  background: linear-gradient(90deg, #6E5AF7, #E85D3B);
+  color: #fff; border: none;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px;
+  text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.ai-body{ padding: 16px 18px; font-size: 13px; line-height: 1.55; }
+.ai-body h4{
+  font-family: var(--display); font-size: 13px; font-weight: 700;
+  margin-bottom: 6px; color: var(--ink-2);
+  display:flex; align-items:center; gap: 6px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.ai-body h4 i{ width: 14px; height: 14px; color: var(--accent); }
+.ai-body .kv{
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding: 6px 0; border-bottom: 1px dashed var(--line);
+  font-size: 13px;
+}
+.ai-body .kv:last-child{ border-bottom: none; }
+.ai-body .kv .k{ color: var(--muted); font-size: 12px; }
+.ai-body .kv .v{ font-family: var(--mono); font-weight: 600; color: var(--ink); }
+.ai-summary{
+  margin-top: 12px; padding: 12px 14px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #F7F5FF 0%, #FBFAF6 100%);
+  border: 1px solid #E5DFF8;
+  font-size: 12.5px; line-height: 1.6;
+}
+.ai-summary ul{ margin: 4px 0 0 18px; padding: 0; }
+.ai-summary li{ margin-bottom: 4px; }
+.ai-summary .h{ font-weight: 700; color: #4A3BB0; margin-bottom: 4px; display:flex; align-items:center; gap:6px;}
+.ai-summary .h i{ width: 14px; height: 14px; }
+
+.ai-empty{
+  padding: 20px; text-align: center; color: var(--muted);
+  border: 1px dashed var(--line-strong); border-radius: 10px;
+  background: var(--panel); margin: 16px;
+  font-size: 12.5px;
+}
+.ai-empty b{ color: var(--ink); }
+.ai-empty .btn{ margin-top: 8px; }
+
+.ai-news-table{
+  width: 100%; border-collapse: collapse; font-size: 12.5px;
+}
+.ai-news-table th, .ai-news-table td{
+  padding: 10px 12px; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: middle;
+}
+.ai-news-table th{
+  background: var(--panel); font-size: 10.5px; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; letter-spacing: 0.4px;
+  position: sticky; top: 0;
+}
+.ai-news-table td.mono, .ai-news-table th.num, .ai-news-table td.num{
+  font-family: var(--mono); text-align: right;
+}
+.ai-news-table tbody tr:last-child td{ border-bottom: none; }
+.ai-news-table tbody tr:hover{ background: var(--panel); }
+.imp{
+  display:inline-block; padding: 2px 8px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px;
+}
+.imp.h{ background:#fbeceb; color: var(--bear); }
+.imp.m{ background:#fff3d8; color: #8f6a10; }
+.imp.l{ background:#eef2f7; color: var(--muted); }
+.dev.pos{ color: var(--bull); font-weight: 700; }
+.dev.neg{ color: var(--bear); font-weight: 700; }
+.news-scroll{ max-height: 460px; overflow-y: auto; }
+
+.spinner{
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+  display: inline-block; vertical-align: -3px;
+}
+@keyframes spin{ to { transform: rotate(360deg); } }
+
 /* ---------- Footer ---------- */
 .footer{
   border-top: 1px solid var(--line);
@@ -637,6 +725,7 @@ input, select, textarea{ font-family: inherit; color: var(--ink); }
   .session-grid{ grid-template-columns: repeat(2, 1fr); }
   .jr-stats{ grid-template-columns: repeat(3, 1fr); }
   .jr-form{ grid-template-columns: repeat(3, 1fr); }
+  .ai-grid{ grid-template-columns: 1fr; }
 }
 @media (max-width: 720px){
   .header-inner{
@@ -761,6 +850,59 @@ input, select, textarea{ font-family: inherit; color: var(--ink); }
     <!-- ================ DASHBOARD ================ -->
     <section class="view active" id="view-dashboard" data-testid="view-dashboard">
       <div class="dash-grid">
+
+        <!-- ============ AI TRADING INTELLIGENCE (3 CARDS) ============ -->
+        <div class="ai-grid">
+          <!-- AI Market Brief -->
+          <div class="card ai-card" data-testid="ai-market-brief">
+            <div class="card-hd">
+              <div class="card-title"><i data-lucide="brain-circuit"></i> AI Market Brief</div>
+              <span class="ai-pill"><i data-lucide="sparkles" style="width:11px;height:11px;"></i> AI</span>
+            </div>
+            <div id="aiBriefBody" class="ai-body">
+              <div style="display:flex; align-items:center; gap:8px; color:var(--muted);">
+                <span class="spinner"></span> Menyiapkan ringkasan…
+              </div>
+            </div>
+          </div>
+
+          <!-- AI News Summary -->
+          <div class="card ai-card" data-testid="ai-news-summary">
+            <div class="card-hd">
+              <div class="card-title"><i data-lucide="newspaper"></i> AI News Summary</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="aiNewsCount" class="pill">— events</span>
+                <button class="icon-btn" id="aiNewsRefresh" title="Muat ulang berita" data-testid="ai-news-refresh">
+                  <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+                </button>
+              </div>
+            </div>
+            <div id="aiNewsBody" class="ai-body" style="padding:0;">
+              <div class="ai-empty">
+                <b>Berita ekonomi real-time</b><br/>
+                Konfigurasi <b>Finnhub API key</b> di Pengaturan untuk melihat data live.
+                <br/>
+                <button class="btn btn-accent" onclick="document.getElementById('btnSettings').click()" data-testid="ai-news-open-settings">
+                  <i data-lucide="key"></i> Buka Pengaturan
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Chart Summary -->
+          <div class="card ai-card" data-testid="ai-chart-summary">
+            <div class="card-hd">
+              <div class="card-title"><i data-lucide="line-chart"></i> AI Chart Summary</div>
+              <span class="pill accent" id="aiChartSymbolPill">—</span>
+            </div>
+            <div id="aiChartBody" class="ai-body">
+              <div class="ai-empty">
+                <b>Analisa chart otomatis</b><br/>
+                Konfigurasi <b>Finnhub API key</b> di Pengaturan untuk menganalisa chart aktif.
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="card col-8" data-testid="card-chart">
           <div class="card-hd">
@@ -1591,6 +1733,47 @@ input, select, textarea{ font-family: inherit; color: var(--ink); }
         </div>
         <div class="form-hint">Sumber pertama yang dibuka saat masuk tab Kalender Ekonomi.</div>
       </div>
+
+      <div style="height:1px; background:var(--line); margin: 18px 0;"></div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom: 14px;">
+        <i data-lucide="key" style="width:16px;height:16px;color:var(--accent);"></i>
+        <div style="font-family:var(--display); font-weight:700; font-size:14px;">API Keys — untuk AI Trading Intelligence</div>
+      </div>
+
+      <div class="form-row">
+        <label for="setFinnhubKey">Finnhub API Key (economic calendar &amp; OHLC)</label>
+        <input type="password" id="setFinnhubKey" placeholder="cvxxx…" autocomplete="off" data-testid="set-finnhub-key" />
+        <div class="form-hint">
+          Gratis di <a href="https://finnhub.io/register" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">finnhub.io/register</a>.
+          Digunakan untuk News Summary + Market Brief + Chart Summary.
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="setTwelveKey">Twelvedata API Key (fallback OHLC — opsional)</label>
+        <input type="password" id="setTwelveKey" placeholder="xxxx…" autocomplete="off" data-testid="set-twelve-key" />
+        <div class="form-hint">
+          Alternatif untuk data OHLC forex/crypto/index. Daftar gratis di
+          <a href="https://twelvedata.com/register" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">twelvedata.com</a>.
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="setLlmEndpoint">LLM Endpoint (opsional — OpenAI-compatible)</label>
+        <input type="text" id="setLlmEndpoint" placeholder="https://openrouter.ai/api/v1/chat/completions" data-testid="set-llm-endpoint" />
+        <div class="form-hint">Kosongkan untuk pakai ringkasan heuristik built-in. Isi untuk pakai LLM (mis. OpenRouter, Groq, Together).</div>
+      </div>
+
+      <div class="form-row" style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <label for="setLlmKey">LLM API Key</label>
+          <input type="password" id="setLlmKey" placeholder="sk-…" autocomplete="off" data-testid="set-llm-key" style="width:100%;" />
+        </div>
+        <div>
+          <label for="setLlmModel">Model</label>
+          <input type="text" id="setLlmModel" placeholder="openai/gpt-4o-mini" data-testid="set-llm-model" style="width:100%;" />
+        </div>
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn" id="settingsResetBtn" data-testid="settings-reset">Reset Default</button>
@@ -1617,6 +1800,11 @@ const DEFAULT_SETTINGS = {
   timeFormat: '24h',    // '24h' | '12h'
   showSeconds: true,
   calDefault: 'tv',     // 'tv' | 'investing' | 'mql5'
+  finnhubKey: '',
+  twelveKey: '',
+  llmEndpoint: '',
+  llmKey: '',
+  llmModel: 'openai/gpt-4o-mini',
 };
 
 const state = {
@@ -2557,6 +2745,11 @@ function openSettings(){
   $$('#calDefaultSeg button').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-src') === state.settings.calDefault);
   });
+  $('#setFinnhubKey').value  = state.settings.finnhubKey || '';
+  $('#setTwelveKey').value   = state.settings.twelveKey || '';
+  $('#setLlmEndpoint').value = state.settings.llmEndpoint || '';
+  $('#setLlmKey').value      = state.settings.llmKey || '';
+  $('#setLlmModel').value    = state.settings.llmModel || '';
   m.classList.add('open');
 }
 function closeSettings(){ $('#settingsModal').classList.remove('open'); }
@@ -2603,8 +2796,14 @@ function initSettingsModal(){
     state.settings.timeFormat = $$('#timeFormatSeg button.active')[0]?.getAttribute('data-fmt') || '24h';
     state.settings.showSeconds = $('#showSecondsSwitch .switch-track').classList.contains('on');
     state.settings.calDefault  = $$('#calDefaultSeg button.active')[0]?.getAttribute('data-src') || 'tv';
+    state.settings.finnhubKey  = $('#setFinnhubKey').value.trim();
+    state.settings.twelveKey   = $('#setTwelveKey').value.trim();
+    state.settings.llmEndpoint = $('#setLlmEndpoint').value.trim();
+    state.settings.llmKey      = $('#setLlmKey').value.trim();
+    state.settings.llmModel    = $('#setLlmModel').value.trim() || 'openai/gpt-4o-mini';
     saveSettings();
     applySettings();
+    refreshAIIntelligence();  // re-fetch data with new keys
     closeSettings();
   });
 }
@@ -2647,6 +2846,7 @@ function init(){
         ['OANDA:EURUSD','OANDA:GBPUSD','OANDA:XAUUSD','BINANCE:BTCUSDT']);
     }
     renderWatchlist();
+    refreshAIIntelligence();
   });
 
   // Symbol select (Dashboard)
@@ -2657,6 +2857,7 @@ function init(){
     loadAdvancedChart(state.symbol);
     loadTechnical(state.symbol, '1h');
     loadSymbolInfo(state.symbol);
+    renderChartSummary();  // AI Chart Summary follows symbol
   });
 
   // Trend symbol
@@ -2727,6 +2928,12 @@ function init(){
 
   // Dashboard widgets
   loadAllDashboardWidgets();
+
+  // AI Trading Intelligence
+  $('#aiNewsRefresh').addEventListener('click', renderNewsSummary);
+  refreshAIIntelligence();
+  // Auto-refresh every 5 minutes
+  setInterval(refreshAIIntelligence, 5 * 60 * 1000);
 }
 
 function loadAllDashboardWidgets(){
@@ -2739,6 +2946,592 @@ function loadAllDashboardWidgets(){
     ['OANDA:XAUUSD','OANDA:EURUSD','OANDA:NAS100USD','BINANCE:BTCUSDT']);
   loadHeatmap();
   loadTVCalendar('tvCal');
+}
+
+/* =====================================================================
+   AI TRADING INTELLIGENCE
+   Real-time data from Finnhub (free tier) + Twelvedata (fallback).
+   Heuristic summary (deterministic) + optional LLM enhancement.
+   ===================================================================== */
+
+/* ---- Symbol mapping: TradingView key → Finnhub symbol ---- */
+const FINNHUB_MAP = {
+  'OANDA:XAUUSD':    { api:'forex',  sym:'OANDA:XAU_USD',    label:'XAUUSD', pip:0.01 },
+  'OANDA:XAGUSD':    { api:'forex',  sym:'OANDA:XAG_USD',    label:'XAGUSD', pip:0.001 },
+  'OANDA:EURUSD':    { api:'forex',  sym:'OANDA:EUR_USD',    label:'EURUSD', pip:0.0001 },
+  'OANDA:GBPUSD':    { api:'forex',  sym:'OANDA:GBP_USD',    label:'GBPUSD', pip:0.0001 },
+  'OANDA:USDJPY':    { api:'forex',  sym:'OANDA:USD_JPY',    label:'USDJPY', pip:0.01 },
+  'OANDA:NAS100USD': { api:'forex',  sym:'OANDA:NAS100_USD', label:'NAS100', pip:1 },
+  'OANDA:US30USD':   { api:'forex',  sym:'OANDA:US30_USD',   label:'US30',   pip:1 },
+  'BINANCE:BTCUSDT': { api:'crypto', sym:'BINANCE:BTCUSDT',  label:'BTCUSD', pip:1 },
+};
+
+/* ---- Fetch OHLC from Finnhub. Returns {c,h,l,o,t,v} arrays ---- */
+async function finnhubCandles(tvSymbol, resolution, fromTs, toTs){
+  const key = state.settings.finnhubKey;
+  if (!key) throw new Error('Finnhub API key belum diisi (Pengaturan).');
+  const m = FINNHUB_MAP[tvSymbol];
+  if (!m) throw new Error('Simbol ' + tvSymbol + ' tidak didukung untuk data OHLC.');
+  const url = `https://finnhub.io/api/v1/${m.api}/candle?symbol=${encodeURIComponent(m.sym)}&resolution=${resolution}&from=${fromTs}&to=${toTs}&token=${encodeURIComponent(key)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Finnhub HTTP ' + res.status);
+  const data = await res.json();
+  if (data.s !== 'ok' || !data.c || data.c.length === 0){
+    throw new Error('Finnhub: tidak ada data (' + (data.s || 'no_data') + '). Cek quota atau simbol.');
+  }
+  return data;
+}
+
+/* ---- Fetch Finnhub economic calendar for a date range ---- */
+async function finnhubEconomicCalendar(fromDate, toDate){
+  const key = state.settings.finnhubKey;
+  if (!key) throw new Error('Finnhub API key belum diisi (Pengaturan).');
+  const url = `https://finnhub.io/api/v1/calendar/economic?from=${fromDate}&to=${toDate}&token=${encodeURIComponent(key)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Finnhub HTTP ' + res.status);
+  const data = await res.json();
+  return data.economicCalendar || [];
+}
+
+/* ---- Indicator calculators ---- */
+function ema(values, period){
+  if (values.length < period) return [];
+  const k = 2 / (period + 1);
+  const out = new Array(values.length).fill(NaN);
+  // seed SMA
+  let sma = 0;
+  for (let i=0; i<period; i++) sma += values[i];
+  sma /= period;
+  out[period-1] = sma;
+  for (let i=period; i<values.length; i++){
+    out[i] = values[i] * k + out[i-1] * (1 - k);
+  }
+  return out;
+}
+function rsi(values, period=14){
+  if (values.length <= period) return NaN;
+  let gain = 0, loss = 0;
+  for (let i=1; i<=period; i++){
+    const d = values[i] - values[i-1];
+    if (d >= 0) gain += d; else loss -= d;
+  }
+  gain /= period; loss /= period;
+  for (let i=period+1; i<values.length; i++){
+    const d = values[i] - values[i-1];
+    const g = d > 0 ? d : 0;
+    const l = d < 0 ? -d : 0;
+    gain = (gain * (period-1) + g) / period;
+    loss = (loss * (period-1) + l) / period;
+  }
+  if (loss === 0) return 100;
+  const rs = gain / loss;
+  return 100 - (100 / (1 + rs));
+}
+function macd(values, fast=12, slow=26, sig=9){
+  const emaFast = ema(values, fast);
+  const emaSlow = ema(values, slow);
+  const macdLine = emaFast.map((v, i) => (isNaN(v) || isNaN(emaSlow[i])) ? NaN : v - emaSlow[i]);
+  const validMacd = macdLine.filter(v => !isNaN(v));
+  const sigLine = ema(validMacd, sig);
+  // align back
+  const offset = macdLine.findIndex(v => !isNaN(v));
+  const fullSig = new Array(macdLine.length).fill(NaN);
+  for (let i=0; i<sigLine.length; i++){
+    if (offset + i < fullSig.length) fullSig[offset + i] = sigLine[i];
+  }
+  const hist = macdLine.map((v, i) => (isNaN(v) || isNaN(fullSig[i])) ? NaN : v - fullSig[i]);
+  return { macd: macdLine, signal: fullSig, hist };
+}
+
+/** Find support/resistance from recent swing highs/lows (fractal method). */
+function findSR(highs, lows, closes, lookback=30){
+  const n = closes.length;
+  const start = Math.max(0, n - lookback);
+  let resistance = Math.max(...highs.slice(start));
+  let support = Math.min(...lows.slice(start));
+  // Also compute mid-range pivots via last 20 candles
+  return { support, resistance };
+}
+
+/** Trend classification via EMA20 vs EMA50 + slope of EMA20. */
+function classifyTrend(closes){
+  if (closes.length < 55) return { trend:'—', reason:'data kurang' };
+  const e20 = ema(closes, 20);
+  const e50 = ema(closes, 50);
+  const last = closes.length - 1;
+  const e20Now = e20[last], e50Now = e50[last];
+  const e20Prev = e20[Math.max(0, last-5)];
+  const slope = e20Now - e20Prev;
+  const price = closes[last];
+  let trend, dir;
+  if (e20Now > e50Now && price > e20Now && slope > 0){ trend='Bullish kuat'; dir='up'; }
+  else if (e20Now > e50Now && price > e50Now){ trend='Bullish'; dir='up'; }
+  else if (e20Now < e50Now && price < e20Now && slope < 0){ trend='Bearish kuat'; dir='down'; }
+  else if (e20Now < e50Now && price < e50Now){ trend='Bearish'; dir='down'; }
+  else { trend='Sideways / Netral'; dir='side'; }
+  return { trend, dir, e20:e20Now, e50:e50Now, price };
+}
+
+/* ---- Compute volatility (% range last N candles) for a symbol ---- */
+async function computeVolatility(tvSymbol, resolution='60', candles=24){
+  const now = Math.floor(Date.now()/1000);
+  const from = now - (candles * 3600); // last 24h for 1h
+  const d = await finnhubCandles(tvSymbol, resolution, from, now);
+  const high = Math.max(...d.h), low = Math.min(...d.l);
+  const last = d.c[d.c.length-1];
+  const pct = ((high - low) / last) * 100;
+  return { pct, high, low, last, symbol: FINNHUB_MAP[tvSymbol].label };
+}
+
+/* ---- Render helpers ---- */
+function fmtImp(impact){
+  if (impact >= 3 || impact === 'high')   return '<span class="imp h">HIGH</span>';
+  if (impact >= 2 || impact === 'medium') return '<span class="imp m">MED</span>';
+  return '<span class="imp l">LOW</span>';
+}
+function fmtVal(v){
+  if (v === null || v === undefined || v === '') return '—';
+  return String(v);
+}
+function fmtDeviation(forecast, actual){
+  const f = parseFloat(forecast), a = parseFloat(actual);
+  if (isNaN(f) || isNaN(a)) return '—';
+  const dev = a - f;
+  const pct = f !== 0 ? ((dev / Math.abs(f)) * 100) : 0;
+  const sign = dev > 0 ? '+' : '';
+  const cls = dev > 0 ? 'dev pos' : (dev < 0 ? 'dev neg' : '');
+  return `<span class="${cls}">${sign}${fmt(dev, 2)} (${sign}${fmt(pct,1)}%)</span>`;
+}
+function fmtDT(unixOrIso){
+  let d;
+  if (typeof unixOrIso === 'number') d = new Date(unixOrIso * 1000);
+  else if (typeof unixOrIso === 'string') d = new Date(unixOrIso);
+  else return '—';
+  if (isNaN(d.getTime())) return '—';
+  const tz = state.settings.timezone;
+  return new Intl.DateTimeFormat('id-ID', {
+    timeZone: tz, month:'short', day:'2-digit',
+    hour: '2-digit', minute: '2-digit',
+    hour12: state.settings.timeFormat === '12h'
+  }).format(d);
+}
+
+/* ================================================================
+   MODULE 1: AI Market Brief
+   Combines: news countdown, active session, XAUUSD trend H1/H4,
+             most volatile pair, and generated 5-bullet summary.
+   ================================================================ */
+async function renderMarketBrief(){
+  const host = $('#aiBriefBody');
+  if (!host) return;
+
+  const now = new Date();
+  const ev = nextHighImpactEvent(now);
+  const evTxt = ev ? (ev.name + ' — ' + fmtDT(ev.when.toISOString())) : '—';
+  const sessActive = activeSessions(now).join(' + ') || 'Closed';
+
+  if (!state.settings.finnhubKey){
+    host.innerHTML = `
+      <h4><i data-lucide="signpost"></i> Fokus Hari Ini</h4>
+      <div class="kv"><span class="k">Sesi aktif</span><span class="v">${sessActive}</span></div>
+      <div class="kv"><span class="k">Berita berikutnya</span><span class="v">${evTxt}</span></div>
+      <div class="kv"><span class="k">Trend XAUUSD H1/H4</span><span class="v">— (butuh API key)</span></div>
+      <div class="kv"><span class="k">Pair paling volatil (24h)</span><span class="v">— (butuh API key)</span></div>
+      <div class="ai-empty" style="margin: 12px 0 0 0;">
+        <b>Konfigurasi Finnhub API key</b> untuk mengaktifkan analisa trend & volatilitas real-time.
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  host.innerHTML = `
+    <h4><i data-lucide="signpost"></i> Fokus Hari Ini</h4>
+    <div class="kv"><span class="k">Sesi aktif</span><span class="v">${sessActive}</span></div>
+    <div class="kv"><span class="k">Berita berikutnya</span><span class="v">${evTxt}</span></div>
+    <div class="kv"><span class="k">Trend XAUUSD H1</span><span class="v" id="briefTrendH1"><span class="spinner"></span></span></div>
+    <div class="kv"><span class="k">Trend XAUUSD H4</span><span class="v" id="briefTrendH4"><span class="spinner"></span></span></div>
+    <div class="kv"><span class="k">Pair paling volatil (24h)</span><span class="v" id="briefVol"><span class="spinner"></span></span></div>
+    <div class="ai-summary" id="briefSummary">
+      <div class="h"><i data-lucide="sparkles"></i> Kesimpulan AI</div>
+      <div style="color:var(--muted); font-size:12px;">Menghitung…</div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+
+  const bullets = [];
+
+  // Trend XAUUSD H1 & H4
+  let trendH1 = null, trendH4 = null;
+  try{
+    const toTs = Math.floor(Date.now()/1000);
+    const fromTsH1 = toTs - (100 * 3600);      // 100 x 1h candles
+    const fromTsH4 = toTs - (100 * 4 * 3600);  // 100 x 4h candles
+    const [d1, d4] = await Promise.all([
+      finnhubCandles('OANDA:XAUUSD', '60',  fromTsH1, toTs),
+      finnhubCandles('OANDA:XAUUSD', '240', fromTsH4, toTs),
+    ]);
+    trendH1 = classifyTrend(d1.c);
+    trendH4 = classifyTrend(d4.c);
+    $('#briefTrendH1').textContent = trendH1.trend;
+    $('#briefTrendH1').className = 'v ' + (trendH1.dir==='up'?'bull':trendH1.dir==='down'?'bear':'');
+    $('#briefTrendH4').textContent = trendH4.trend;
+    $('#briefTrendH4').className = 'v ' + (trendH4.dir==='up'?'bull':trendH4.dir==='down'?'bear':'');
+  }catch(e){
+    $('#briefTrendH1').textContent = 'gagal';
+    $('#briefTrendH4').textContent = e.message;
+  }
+
+  // Volatility scan
+  const scanSyms = ['OANDA:XAUUSD','OANDA:EURUSD','OANDA:GBPUSD','OANDA:USDJPY','BINANCE:BTCUSDT'];
+  let mostVol = null;
+  try{
+    const results = await Promise.allSettled(scanSyms.map(s => computeVolatility(s, '60', 24)));
+    const ok = results.filter(r => r.status === 'fulfilled').map(r => r.value);
+    if (ok.length){
+      mostVol = ok.reduce((a,b) => a.pct > b.pct ? a : b);
+      $('#briefVol').textContent = mostVol.symbol + ' · ' + fmt(mostVol.pct, 2) + ' %';
+    } else {
+      $('#briefVol').textContent = 'gagal';
+    }
+  }catch(e){
+    $('#briefVol').textContent = 'gagal';
+  }
+
+  // Generate bullets
+  bullets.push(`Sesi ${sessActive} aktif — atur eksekusi pada window ini.`);
+  if (ev) bullets.push(`${ev.name} akan rilis ${fmtDT(ev.when.toISOString())} — waspadai lonjakan volatilitas.`);
+  if (trendH1 && trendH4){
+    if (trendH1.dir === trendH4.dir && trendH1.dir !== 'side'){
+      bullets.push(`Gold selaras ${trendH4.trend.toLowerCase()} di H1 & H4 — bias ${trendH4.dir === 'up' ? 'BUY' : 'SELL'} lebih kuat.`);
+    } else {
+      bullets.push(`Gold divergen: H1 ${trendH1.trend}, H4 ${trendH4.trend} — tunggu konfirmasi HTF.`);
+    }
+  }
+  if (mostVol){
+    bullets.push(`${mostVol.symbol} paling volatil 24 jam terakhir (${fmt(mostVol.pct,2)}%) — potensi peluang tapi risk tinggi.`);
+  }
+  bullets.push(`Selalu gunakan risk max 1-2% per trade; jaga rasio RR ≥ 1:2 mengikuti SOP.`);
+
+  const summaryEl = $('#briefSummary');
+  summaryEl.innerHTML = `
+    <div class="h"><i data-lucide="sparkles"></i> Kesimpulan AI</div>
+    <ul>${bullets.slice(0,5).map(b => '<li>'+b+'</li>').join('')}</ul>
+  `;
+  if (window.lucide) lucide.createIcons();
+
+  // Optional: LLM enhance
+  maybeEnhanceWithLLM('brief', { sessActive, ev, trendH1, trendH4, mostVol }, summaryEl);
+}
+
+/* ================================================================
+   MODULE 2: AI News Summary
+   Real-time from Finnhub /calendar/economic
+   ================================================================ */
+async function renderNewsSummary(){
+  const host = $('#aiNewsBody');
+  const cntEl = $('#aiNewsCount');
+  if (!host) return;
+
+  if (!state.settings.finnhubKey){
+    host.innerHTML = `
+      <div class="ai-empty">
+        <b>Berita ekonomi real-time</b><br/>
+        Konfigurasi <b>Finnhub API key</b> di Pengaturan untuk melihat data live.
+        <br/>
+        <button class="btn btn-accent" onclick="document.getElementById('btnSettings').click()" data-testid="ai-news-open-settings">
+          <i data-lucide="key"></i> Buka Pengaturan
+        </button>
+      </div>`;
+    if (window.lucide) lucide.createIcons();
+    cntEl.textContent = '— events';
+    return;
+  }
+
+  host.innerHTML = `<div class="ai-empty"><span class="spinner"></span> Memuat kalender ekonomi…</div>`;
+
+  const today = new Date();
+  const from = today.toISOString().slice(0,10);
+  const toD = new Date(today.getTime() + 24*3600*1000);
+  const to = toD.toISOString().slice(0,10);
+
+  let events;
+  try{
+    events = await finnhubEconomicCalendar(from, to);
+  }catch(e){
+    host.innerHTML = `<div class="ai-empty"><b>Gagal memuat</b><br/>${e.message}</div>`;
+    return;
+  }
+
+  // Filter: medium + high impact only
+  events = events.filter(e => (e.impact === 'high' || e.impact === 'medium'))
+                 .sort((a,b) => (a.time || '').localeCompare(b.time || ''));
+
+  cntEl.textContent = events.length + ' events';
+
+  if (events.length === 0){
+    host.innerHTML = `<div class="ai-empty">Tidak ada event high/medium impact untuk periode ${from} – ${to}.</div>`;
+    return;
+  }
+
+  const rows = events.map(e => {
+    const cur = (e.country || '').toUpperCase();
+    const name = e.event || '—';
+    const imp = fmtImp(e.impact);
+    const t = fmtDT(e.time);
+    const prev = fmtVal(e.prev);
+    const forecast = fmtVal(e.estimate);
+    const actual = fmtVal(e.actual);
+    const dev = (e.actual !== null && e.actual !== undefined && e.actual !== '' &&
+                 e.estimate !== null && e.estimate !== undefined && e.estimate !== '')
+                ? fmtDeviation(e.estimate, e.actual) : '—';
+    return `<tr>
+      <td class="mono">${cur}</td>
+      <td>${name}</td>
+      <td>${imp}</td>
+      <td class="mono">${t}</td>
+      <td class="num">${prev}</td>
+      <td class="num">${forecast}</td>
+      <td class="num">${actual}</td>
+      <td class="num">${dev}</td>
+    </tr>`;
+  }).join('');
+
+  // AI summary for released events
+  const released = events.filter(e => e.actual !== null && e.actual !== undefined && e.actual !== '');
+  const impactBullets = generateNewsImpactBullets(released);
+
+  host.innerHTML = `
+    <div class="news-scroll">
+      <table class="ai-news-table">
+        <thead><tr>
+          <th>CCY</th><th>Nama</th><th>Imp</th><th>Waktu</th>
+          <th class="num">Prev</th><th class="num">Forecast</th>
+          <th class="num">Actual</th><th class="num">Deviation</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="ai-summary" style="margin: 12px 16px 16px 16px;">
+      <div class="h"><i data-lucide="sparkles"></i> Dampak pada USD &amp; Gold</div>
+      ${impactBullets.length ? '<ul>' + impactBullets.map(b => '<li>'+b+'</li>').join('') + '</ul>'
+        : '<div style="color:var(--muted); font-size:12px;">Belum ada rilis Actual — analisa muncul otomatis begitu data keluar.</div>'}
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+/** Generate impact bullets from released events (deterministic heuristic).
+ *  For each USD/EUR/GBP event with actual > forecast → hawkish/bullish for currency.
+ */
+function generateNewsImpactBullets(released){
+  const bullets = [];
+  if (!released.length) return bullets;
+
+  // Group by currency
+  const byCcy = {};
+  released.forEach(e => {
+    const cur = (e.country || '').toUpperCase();
+    if (!byCcy[cur]) byCcy[cur] = [];
+    byCcy[cur].push(e);
+  });
+
+  // Analyse USD events
+  const usdEvents = byCcy['US'] || [];
+  const usdBeats = usdEvents.filter(e => parseFloat(e.actual) > parseFloat(e.estimate));
+  const usdMiss = usdEvents.filter(e => parseFloat(e.actual) < parseFloat(e.estimate));
+
+  if (usdEvents.length){
+    if (usdBeats.length > usdMiss.length){
+      bullets.push(`USD cenderung <b>menguat</b> — ${usdBeats.length} rilis US di atas forecast (${usdBeats.map(e=>e.event).slice(0,2).join(', ')}). Gold berpotensi <b>tertekan</b>.`);
+    } else if (usdMiss.length > usdBeats.length){
+      bullets.push(`USD cenderung <b>melemah</b> — ${usdMiss.length} rilis US di bawah forecast. Gold berpotensi <b>naik</b>.`);
+    } else {
+      bullets.push(`Rilis US campuran — dampak ke USD/Gold cenderung ranging.`);
+    }
+  }
+
+  // Detect high-impact single events with large deviation
+  released.forEach(e => {
+    const f = parseFloat(e.estimate), a = parseFloat(e.actual);
+    if (isNaN(f) || isNaN(a) || f === 0) return;
+    const devPct = Math.abs((a - f) / f) * 100;
+    if (e.impact === 'high' && devPct > 20){
+      const dir = a > f ? 'lebih tinggi' : 'lebih rendah';
+      bullets.push(`<b>${e.event}</b> (${e.country}) rilis <b>${dir}</b> ${fmt(devPct,1)}% dari forecast → volatilitas jangka pendek meningkat.`);
+    }
+  });
+
+  // Volatility outlook
+  const highCount = released.filter(e => e.impact === 'high').length;
+  if (highCount >= 2){
+    bullets.push(`Terdapat ${highCount} rilis high-impact hari ini — <b>volatilitas diperkirakan tinggi</b>. Perkecil size, perlebar SL.`);
+  }
+
+  return bullets.slice(0, 5);
+}
+
+/* ================================================================
+   MODULE 3: AI Chart Summary
+   Analyses active TradingView chart symbol.
+   ================================================================ */
+async function renderChartSummary(){
+  const host = $('#aiChartBody');
+  const pill = $('#aiChartSymbolPill');
+  if (!host || !pill) return;
+
+  const tvSym = state.symbol;
+  const mp = FINNHUB_MAP[tvSym];
+  pill.textContent = (mp ? mp.label : tvSym) + ' · H1';
+
+  if (!state.settings.finnhubKey){
+    host.innerHTML = `<div class="ai-empty">
+      <b>Analisa chart otomatis</b><br/>
+      Konfigurasi <b>Finnhub API key</b> di Pengaturan untuk menganalisa <b>${mp ? mp.label : tvSym}</b>.
+    </div>`;
+    return;
+  }
+  if (!mp){
+    host.innerHTML = `<div class="ai-empty">Simbol <b>${tvSym}</b> tidak didukung untuk analisa OHLC.</div>`;
+    return;
+  }
+
+  host.innerHTML = `<div style="display:flex; align-items:center; gap:8px; color:var(--muted); padding: 8px 0;">
+    <span class="spinner"></span> Menganalisa ${mp.label} …
+  </div>`;
+
+  let d;
+  try{
+    const to = Math.floor(Date.now()/1000);
+    const from = to - (200 * 3600); // 200 x 1h candles
+    d = await finnhubCandles(tvSym, '60', from, to);
+  }catch(e){
+    host.innerHTML = `<div class="ai-empty"><b>Gagal analisa</b><br/>${e.message}</div>`;
+    return;
+  }
+
+  const closes = d.c, highs = d.h, lows = d.l;
+  const last = closes.length - 1;
+  const price = closes[last];
+
+  const trend = classifyTrend(closes);
+  const e20Arr = ema(closes, 20);
+  const e50Arr = ema(closes, 50);
+  const rsiVal = rsi(closes, 14);
+  const m = macd(closes);
+  const macdVal = m.macd[last], sigVal = m.signal[last], histVal = m.hist[last];
+  const sr = findSR(highs, lows, closes, 40);
+
+  // Determine RSI zone
+  let rsiZone = 'Netral';
+  if (rsiVal > 70) rsiZone = 'Overbought';
+  else if (rsiVal < 30) rsiZone = 'Oversold';
+  else if (rsiVal > 55) rsiZone = 'Bias Naik';
+  else if (rsiVal < 45) rsiZone = 'Bias Turun';
+
+  // MACD signal
+  let macdSig = 'Netral';
+  if (!isNaN(macdVal) && !isNaN(sigVal)){
+    if (macdVal > sigVal && histVal > 0) macdSig = 'Bullish (MACD > Signal)';
+    else if (macdVal < sigVal && histVal < 0) macdSig = 'Bearish (MACD < Signal)';
+  }
+
+  const digits = price < 10 ? 5 : (price < 1000 ? 4 : 2);
+
+  host.innerHTML = `
+    <h4><i data-lucide="activity"></i> Indikator Real-time</h4>
+    <div class="kv"><span class="k">Harga saat ini</span><span class="v mono">${fmt(price, digits)}</span></div>
+    <div class="kv"><span class="k">Trend</span><span class="v ${trend.dir==='up'?'bull':trend.dir==='down'?'bear':''}">${trend.trend}</span></div>
+    <div class="kv"><span class="k">EMA 20 / EMA 50</span><span class="v mono">${fmt(e20Arr[last], digits)} / ${fmt(e50Arr[last], digits)}</span></div>
+    <div class="kv"><span class="k">RSI (14)</span><span class="v mono">${fmt(rsiVal, 1)} · ${rsiZone}</span></div>
+    <div class="kv"><span class="k">MACD</span><span class="v mono">${fmt(macdVal, 4)} · ${macdSig}</span></div>
+    <div class="kv"><span class="k">Support terdekat</span><span class="v mono bear">${fmt(sr.support, digits)}</span></div>
+    <div class="kv"><span class="k">Resistance terdekat</span><span class="v mono bull">${fmt(sr.resistance, digits)}</span></div>
+    <div class="ai-summary" id="chartSummary">
+      <div class="h"><i data-lucide="sparkles"></i> Kesimpulan AI</div>
+      <ul id="chartBullets"></ul>
+    </div>
+  `;
+
+  // Build bullets
+  const bullets = [];
+  bullets.push(`Trend ${trend.trend} — harga ${price > e20Arr[last] ? 'di atas' : 'di bawah'} EMA20.`);
+  if (rsiVal > 70) bullets.push(`RSI ${fmt(rsiVal,1)} overbought — potensi pullback / koreksi.`);
+  else if (rsiVal < 30) bullets.push(`RSI ${fmt(rsiVal,1)} oversold — potensi bounce ke atas.`);
+  else bullets.push(`RSI ${fmt(rsiVal,1)} netral — momentum tidak ekstrem.`);
+  bullets.push(macdSig + '.');
+  const nextRes = sr.resistance, nextSup = sr.support;
+  if (trend.dir === 'up'){
+    bullets.push(`Target atas: <b>${fmt(nextRes, digits)}</b>. Invalidation di bawah <b>${fmt(nextSup, digits)}</b>.`);
+  } else if (trend.dir === 'down'){
+    bullets.push(`Target bawah: <b>${fmt(nextSup, digits)}</b>. Invalidation di atas <b>${fmt(nextRes, digits)}</b>.`);
+  } else {
+    bullets.push(`Rentang: <b>${fmt(nextSup, digits)} – ${fmt(nextRes, digits)}</b>. Tunggu breakout untuk arah.`);
+  }
+
+  $('#chartBullets').innerHTML = bullets.slice(0,5).map(b => '<li>'+b+'</li>').join('');
+  if (window.lucide) lucide.createIcons();
+
+  // Optional LLM enhance
+  maybeEnhanceWithLLM('chart', {
+    symbol: mp.label, price, trend: trend.trend, e20: e20Arr[last], e50: e50Arr[last],
+    rsi: rsiVal, macd: macdVal, signal: sigVal, support: sr.support, resistance: sr.resistance
+  }, $('#chartSummary'));
+}
+
+/* ================================================================
+   Optional LLM enhancement (OpenAI-compatible endpoint)
+   ================================================================ */
+async function maybeEnhanceWithLLM(kind, ctx, targetEl){
+  const { llmEndpoint, llmKey, llmModel } = state.settings;
+  if (!llmEndpoint || !llmKey) return; // silent skip
+
+  const prompt = kind === 'brief'
+    ? `Kamu adalah analis pasar. Beri 3 kalimat singkat (Bahasa Indonesia) tentang situasi trading berikut. Fokus pada Gold & USD. Data: ${JSON.stringify(ctx)}`
+    : `Kamu adalah analis teknikal. Beri 2 kalimat rekomendasi trading singkat (Bahasa Indonesia) untuk simbol ini berdasarkan data indikator berikut. Sertakan level entry/SL/TP indikatif. Data: ${JSON.stringify(ctx)}`;
+
+  try{
+    const res = await fetch(llmEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + llmKey,
+        'HTTP-Referer': location.origin,
+        'X-Title': 'Trading Command Center',
+      },
+      body: JSON.stringify({
+        model: llmModel || 'openai/gpt-4o-mini',
+        messages: [
+          { role: 'system', content: 'Kamu adalah analis pasar profesional. Jawab singkat, Bahasa Indonesia.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.4,
+        max_tokens: 220,
+      })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content?.trim();
+    if (!text) return;
+    // Append below existing bullets
+    const box = document.createElement('div');
+    box.style.cssText = 'margin-top:10px; padding-top:10px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--ink);';
+    box.innerHTML = '<b style="color:#4A3BB0;">✧ LLM Enhance</b><br/>' + text.replace(/\n/g,'<br/>');
+    targetEl.appendChild(box);
+  }catch(e){
+    // silent
+  }
+}
+
+/* ================================================================
+   Refresh orchestrator
+   ================================================================ */
+async function refreshAIIntelligence(){
+  await Promise.allSettled([
+    renderMarketBrief(),
+    renderNewsSummary(),
+    renderChartSummary(),
+  ]);
 }
 
 document.addEventListener('DOMContentLoaded', init);

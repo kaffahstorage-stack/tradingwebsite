@@ -1,66 +1,77 @@
 # Trading Command Center — PRD
 
 ## Original Problem Statement
-Membuat website Trading Command Center modern (background putih, minimalis, profesional, responsif) sebagai **satu file HTML tunggal** yang mendukung banyak instrumen. Wajib memaksimalkan widget resmi TradingView.
-
-**Update v1.1** (permintaan user lanjutan):
-- Fitur **Pengaturan** untuk ubah zona waktu (UTC + timezone lain) dan format waktu 24-jam / AM-PM
-- **Kalender ekonomi dari berbagai sumber** (Investing.com, MQL5, TradingView)
-- Tambahan fitur trading lain agar website tidak terlalu pendek
+Single-file HTML Trading Command Center multi-instrumen dengan widget resmi TradingView. Update permintaan:
+- v1.1: Pengaturan (timezone + format waktu 12h/24h), Kalender Ekonomi multi-sumber (Investing/MQL5), fitur trading tambahan
+- v1.2: Modul AI Trading Intelligence — 3 card (AI Market Brief, AI News Summary, AI Chart Summary) dengan data real-time dari API resmi
 
 ## User Choices
-- 1 file HTML tunggal ✅
-- Zona waktu default: bebas (dipilih WIB, bisa diubah user)
-- Format waktu: user bisa pilih 24-jam / AM-PM
-- Bahasa: Indonesia
-- Watchlist default: kosong (user tambah sendiri)
+- 1 file HTML tunggal
+- Bahasa Indonesia, tema coral #E85D3B minimalis
+- Watchlist default kosong
+- Zona waktu default WIB, format 24h, bisa diubah
+- Kalender: Investing.com iframe + MQL5 iframe + TradingView + fallback ForexFactory/MyFxBook/DailyFX
+- AI Intelligence: real data via Finnhub API (opsional Twelvedata + LLM OpenAI-compatible)
 
 ## Architecture
-- **1 file HTML** di `/app/index.html`, `/app/trading-command-center.html`, dan aktif via `/app/frontend/index.html` (served by `serve` port 3000)
-- Zero backend needed (stub `/api/health` hanya untuk supervisor)
-- Semua data live dari widget resmi TradingView + iframe Investing.com + iframe MQL5
-- LocalStorage: watchlist, settings (timezone, format waktu, detik, cal default), journal
+- `/app/index.html`, `/app/trading-command-center.html` (delivery), `/app/frontend/index.html` (aktif via `serve` port 3000). Ukuran: 141KB.
+- Zero backend needed
+- LocalStorage: watchlist, journal, settings (timezone, format, seconds, calDefault, finnhubKey, twelveKey, llmEndpoint, llmKey, llmModel)
 - Font: Bricolage Grotesque + Manrope + JetBrains Mono
-- Aksen: coral #E85D3B, bull #0E8F55, bear #C0392B
+- 8 tab: Dashboard · Trend Analyzer · Sesi Global · Cross Rates & Screener · Kalender Ekonomi · Watchlist · Kalkulator · Journal
 
-## What's Been Implemented
+## v1.2 (7 Jan 2026) — AI Trading Intelligence
 
-### v1.0 (7 Jan 2026)
-- Header dengan clock WIB+UTC, market Forex OPEN/CLOSED, countdown NFP/CPI/FOMC estimator, ticker tape TradingView
-- Dashboard: Advanced Chart + dropdown 8 simbol (XAUUSD, XAGUSD, EURUSD, GBPUSD, USDJPY, NAS100, US30, BTCUSD), Technical Analysis, Symbol Overview, Market Overview multi-tab, 4 mini snapshots, Forex Heatmap, Economic Calendar TradingView
-- Trend Analyzer: 6 speedometer TA TradingView per timeframe (M1, M5, M15, H1, H4, D1)
-- Watchlist LocalStorage
-- 7 kalkulator: Pip, Lot Size, Risk, Risk/Reward, Profit, Margin, Drawdown
+### 3 AI Cards di Dashboard (di atas Advanced Chart)
+1. **AI Market Brief** — data real:
+   - Sesi aktif (internal)
+   - Berita high-impact berikutnya (NFP/CPI/FOMC estimator internal)
+   - Trend XAUUSD H1 & H4 (dari Finnhub OHLC + EMA20/50 slope)
+   - Pair paling volatil 24 jam (scan XAUUSD, EURUSD, GBPUSD, USDJPY, BTCUSD via Finnhub)
+   - 5-bullet AI conclusion (deterministic heuristic dari data real)
 
-### v1.1 (7 Jan 2026)
-- **Settings Modal** — dropdown 18+ zona waktu (WIB/WITA/WIT/UTC/Asia/Eropa/Amerika/Oseania), format 24h vs 12h AM/PM, toggle tampilkan detik, default calendar source; semua persist di LocalStorage
-- Clock header + Advanced Chart timezone + Sessions board mengikuti pengaturan
-- **Tab Sesi Global** — 4 kartu sesi (Sydney/Tokyo/London/NY) dengan waktu lokal (mengikuti setting timezone), status OPEN/CLOSED, progress bar cycle, countdown, karakteristik sesi, volatilitas 4 instrumen (mini charts)
-- **Tab Kalender Ekonomi Multi-Sumber** — TradingView (embed), Investing.com (iframe), MQL5 (iframe) + tombol "Buka di tab baru" per sumber + notice fallback jika embed diblokir + 3 kartu sumber tambahan (ForexFactory/MyFxBook/DailyFX)
-- **Tab Cross Rates & Screener** — TV Forex Cross Rates matrix, Currency Converter, Screener (Forex/Crypto/Stocks/CFD dengan tabs)
-- **3 Kalkulator baru**: Pivot Points (Classic/Fibonacci/Camarilla), Fibonacci Retracement + Extension (11 level 0–261.8%), Compound Growth (proyeksi harian/mingguan/bulanan)
-- **Tab Journal** — form lengkap (tanggal, simbol, arah, entry, SL, TP, lot, P/L, outcome, strategi, catatan), 6 stat cards (total, win-rate %, wins, losses, total P/L, avg RR), tabel semua trade dengan sort by tanggal, delete per row, export JSON, clear all
-- Header metric tambahan: **Sesi aktif** (misal "Sydney + Tokyo")
-- **Ticker tape sticky di semua tab**
-- Icon Lucide untuk semua UI (megaphone, gauge, globe-2, table-2, calendar-days, notebook-pen, crosshair, waves, dll)
+2. **AI News Summary** — data real:
+   - Fetch `finnhub.io/api/v1/calendar/economic?from=today&to=tomorrow`
+   - Table: Currency · Nama · Impact · Waktu (mengikuti timezone user) · Prev · Forecast · Actual · Deviation
+   - Filter medium + high impact
+   - Auto-refresh 5 menit + tombol refresh manual
+   - AI Summary otomatis: analisa dampak USD/Gold + volatilitas outlook saat Actual tersedia (heuristik: `actual > forecast` → mata uang menguat, dll)
 
-## Verified Manually (screenshots)
-- Header live: LON 02:30:36 am (12h AM/PM), UTC 01:30:36 am, FOREX OPEN, SESI Sydney + Tokyo, US CPI countdown
-- Settings modal open & save berhasil → apply ke seluruh app
-- Sessions board dengan London timezone: Sydney 11pm→8am OPEN, Tokyo 1am→10am OPEN, London 9am→6pm CLOSED, NY 2pm→11pm CLOSED — semua konsisten
-- Advanced Chart Gold render dengan indikator EMA + RSI
-- Trend Analyzer render 6 speedometer signal
-- Calendar TV render, Investing/MQL5 diblokir Cloudflare/bot detection tapi tombol "Buka di tab baru" berfungsi
-- Cross Rates + Currency Converter + Screener render
-- Journal: add trade EURUSD win $245 → stats update (Total 1, Win-Rate 100%, P/L +$245)
+3. **AI Chart Summary** — data real:
+   - Fetch OHLC H1 200 candles untuk simbol aktif dari Finnhub
+   - Compute: EMA20, EMA50, RSI(14), MACD(12,26,9), Support/Resistance (40-candle range)
+   - Klasifikasi Trend (Bullish kuat / Bullish / Sideways / Bearish / Bearish kuat)
+   - Zone RSI (Overbought/Oversold/Netral/Bias)
+   - MACD signal (Bullish/Bearish)
+   - 5-bullet conclusion + level target & invalidation
+   - Auto re-fetch saat user ganti simbol
+
+### Settings — API Keys Section (baru)
+- Finnhub API Key (wajib untuk fitur AI — gratis di finnhub.io/register)
+- Twelvedata API Key (opsional fallback OHLC)
+- LLM Endpoint + Key + Model (opsional — enhance summary via OpenAI-compatible endpoint seperti OpenRouter/Groq/Together)
+- Semua tersimpan di LocalStorage
+
+### Real-time Data Guarantees
+- **Zero dummy data** — jika API key belum diisi, tampilkan pesan "Konfigurasi Finnhub API key" dengan tombol Buka Pengaturan (bukan data palsu)
+- Semua indikator dihitung client-side dari OHLC real
+- CORS-enabled endpoints (Finnhub browser-friendly)
+- Error handling: tampilkan pesan error asli saat API gagal (quota habis, key salah, dll)
+
+## Verified Manually
+- Dashboard load: 3 AI cards render di atas Advanced Chart
+- AI Market Brief: menampilkan Sesi aktif + Berita berikutnya walau tanpa API key
+- Settings modal: 5 field baru (Finnhub, Twelve, LLM Endpoint/Key/Model) dengan hint & link daftar
+- Save settings: `refreshAIIntelligence()` auto-triggered
+- JavaScript functions: renderMarketBrief, renderNewsSummary, renderChartSummary, finnhubCandles, ema, rsi, macd — semua terdefinisi
+- Auto-refresh 5 menit + manual refresh button
 
 ## Backlog / Future (P2)
-- Dark mode toggle
-- Simpan preferensi simbol terakhir di LocalStorage
-- Compare 2 simbol side-by-side di Trend Analyzer
-- Import journal dari JSON/CSV
-- Alert saat berita high-impact <30 menit
-- Note per simbol di Watchlist
+- Alert notification saat Actual news rilis dengan deviasi besar (browser Notification API)
+- Chart Summary multi-timeframe view (H1 + H4 side-by-side)
+- Historical News tracker (event yang sudah lewat + dampak actual ke Gold)
+- Sentiment aggregator dari beberapa sumber (Finnhub news + FMP)
+- Custom watchlist AI: dedicated Chart Summary per simbol di Watchlist
 
 ## Enhancement Suggestion (Business-Facing)
-Karena user sudah punya Journal + Kalkulator + Calendar semua di satu tempat, next-level move: tambahkan **backtesting scratchpad ringan** — user isi rules strategy (contoh: "buy 15m break dari London low"), TCC bantu track winrate & profit factor dari journal entries yang diberi tag strategi tersebut. Ini menjadikan TCC bukan sekadar dashboard, tapi tool **improve performa** trader.
+Modul AI sekarang perlu API key user. Improve UX: tambahkan **"Trial demo key"** dengan rate limit tinggi (mis. lewat backend proxy di masa depan), atau tutorial 60-detik video/GIF pertama masuk yang guide user daftar Finnhub → paste key → nikmati AI intelligence. Ini menurunkan barrier from "install & fill 5 fields" jadi "1-click quickstart" — critical untuk retention.
