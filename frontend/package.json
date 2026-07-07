@@ -1,0 +1,12 @@
+{
+  "name": "trading-command-center",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Single-file trading command center powered by TradingView widgets.",
+  "scripts": {
+    "start": "serve . -l tcp://0.0.0.0:3000 --no-clipboard --single"
+  },
+  "dependencies": {
+    "serve": "14.2.6"
+  }
+}
